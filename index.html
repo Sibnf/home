@@ -4,186 +4,155 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Segunda Igreja Batista de Nova Friburgo</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-
     <style>
-      body { font-family: 'Lato', sans-serif; background-color: #fdfcf0; color: #19395f; -webkit-font-smoothing: antialiased; font-size: 18px; }
+      body { font-family: 'Lato', sans-serif; background-color: #fdfcf0; color: #19395f; }
       h1, h2, h3 { font-family: 'Playfair Display', serif; }
-      section { scroll-margin-top: 140px; }
+      .texto-grande { font-size: 1.25rem; line-height: 1.8; }
+      .nav-card { background: white; border: 2px solid #19395f; border-radius: 8px; padding: 10px 2px; text-align: center; font-weight: 900; font-size: 0.75rem; color: #19395f; }
       
-      /* Menu Mobile Robusto */
-      .mobile-btn {
-          background-color: #122a46; color: white; border-radius: 8px;
-          display: flex; align-items: center; justify-content: center;
-          padding: 14px 6px; text-decoration: none; font-size: 13px; 
-          font-weight: 900; text-transform: uppercase; text-align: center;
-          border: 1px solid rgba(255,255,255,0.1);
+      /* Estilo exato das redes sociais da foto anexa */
+      .social-card {
+          display: flex; align-items: center; gap: 15px; padding: 20px;
+          background: white; border: 2px solid #19395f; border-radius: 12px;
+          box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s;
       }
-
-      .big-social-btn {
-          display: flex; align-items: center; gap: 1rem;
-          padding: 1.5rem; border-radius: 0.8rem; border: 3px solid #19395f;
-          text-decoration: none; width: 100%;
-      }
-
-      .calendar-container {
-          position: relative; padding-bottom: 120%; height: 0; overflow: hidden;
-      }
-      @media (min-width: 768px) {
-          .calendar-container { padding-bottom: 600px; height: 600px; }
-      }
-      .calendar-container iframe {
-          position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      }
-
-      /* Impede quebra do CNPJ */
-      .no-break { white-space: nowrap; font-variant-numeric: tabular-nums; }
+      .social-card:hover { transform: translateY(-3px); }
+      .social-card i { font-size: 28px; }
     </style>
 </head>
 <body>
 
-    <nav class="bg-[#19395f] text-white py-4 px-4 shadow-lg sticky top-0 z-50">
-        <div class="container mx-auto flex justify-between items-center">
-          <div class="flex items-center gap-3">
-             <img src="logo.png" class="w-16 h-16 rounded-full border-2 border-[#c5a059] object-cover" onerror="this.src='https://via.placeholder.com/150'"/>
+    <nav class="bg-[#19395f] text-white py-4 px-4 sticky top-0 z-50 shadow-xl">
+        <div class="container mx-auto flex flex-col items-center">
+          <div class="flex items-center gap-3 mb-4">
+             <img src="Logo.png" class="w-14 h-14 rounded-full border-2 border-[#c5a059] bg-white" onerror="this.src='logo.png';">
              <div class="leading-tight">
-               <span class="text-lg md:text-2xl font-serif font-bold block">Segunda Igreja Batista</span>
-               <span class="text-xs md:text-base opacity-90 block">de Nova Friburgo</span>
+               <span class="text-xl md:text-2xl font-serif font-bold block">Segunda Igreja Batista</span>
+               <span class="text-xs opacity-80 block uppercase tracking-widest text-[#c5a059]">Nova Friburgo</span>
              </div>
           </div>
-  
-          <div class="hidden xl:flex items-center gap-6 text-base font-bold uppercase tracking-wider">
-            <a href="#biblia" class="hover:text-[#c5a059]">Bíblia</a>
-            <a href="#historia" class="hover:text-[#c5a059]">História</a>
-            <a href="#pastor" class="hover:text-[#c5a059]">Pastor</a>
-            <a href="#agenda" class="hover:text-[#c5a059]">Agenda</a>
-            <a href="#ofertas" class="hover:text-[#c5a059]">Ofertas</a>
-            <a href="#aniversariantes" class="hover:text-[#c5a059]">Aniversariantes</a>
-            <a href="https://wa.me/5522981633108" target="_blank" class="bg-[#25D366] text-white px-5 py-3 rounded-full flex items-center gap-2 text-lg">
-                <i data-lucide="message-circle"></i> Contato
-            </a>
+          <div class="grid grid-cols-4 gap-1 w-full max-w-lg xl:hidden">
+            <a href="#historia" class="nav-card">História</a>
+            <a href="#pastor" class="nav-card">Pastor</a>
+            <a href="#ministerios" class="nav-card">Ministérios</a>
+            <a href="#social" class="nav-card">Redes</a>
           </div>
-        </div>
-        
-        <div class="xl:hidden mt-4 pt-4 border-t border-white/20 grid grid-cols-2 gap-3">
-            <a href="#biblia" class="mobile-btn">📖 A Bíblia</a>
-            <a href="#historia" class="mobile-btn">📜 História</a>
-            <a href="#pastor" class="mobile-btn">🤝 Pastor</a>
-            <a href="#ministerios" class="mobile-btn">🙌 Ministérios</a>
-            <a href="#agenda" class="mobile-btn">📅 Agenda</a>
-            <a href="#ofertas" class="mobile-btn">💎 Ofertas</a>
-            <a href="#aniversariantes" class="mobile-btn col-span-2 bg-[#c5a059] text-[#19395f]">🎂 Aniversariantes</a>
         </div>
     </nav>
 
-    <main class="max-w-5xl mx-auto bg-white shadow-2xl min-h-screen border-t-8 border-[#19395f]">
+    <main class="max-w-4xl mx-auto bg-white shadow-2xl overflow-hidden">
         
-        <div class="w-full aspect-video bg-black">
-            <iframe class="w-full h-full" src='https://www.youtube.com/embed/0FiADaWB7G8' frameBorder='0' allowFullScreen></iframe>
+        <div class="aspect-video bg-black">
+            <iframe class="w-full h-full" src="https://www.youtube.com/embed/0FiADaWB7G8" frameborder="0" allowfullscreen></iframe>
         </div>
 
-        <div class="px-6 py-12 md:px-20 space-y-24">
-
-            <section id="biblia" class="text-center border-b-2 border-[#19395f]/10 pb-16">
-                <i data-lucide="book-open" class="w-16 h-16 text-[#c5a059] mx-auto mb-6"></i>
-                <h2 class="text-4xl md:text-5xl font-bold mb-8 text-[#19395f]">A Bíblia Sagrada</h2>
-                <p class="text-2xl italic text-gray-700 max-w-2xl mx-auto mb-8">"Lâmpada para os meus pés é a tua palavra e luz para o meu caminho." (Salmos 119:105)</p>
-                <p class="text-xl md:text-2xl text-gray-600 leading-relaxed text-justify md:text-center">Cremos que a Bíblia é a Palavra de Deus inspirada, inerrante e suficiente. Ela é a nossa única regra de fé e prática.</p>
-            </section>
+        <div class="p-8 md:p-16 space-y-24">
 
             <section id="historia">
-                <h2 class="text-4xl md:text-5xl font-bold mb-10 text-[#19395f] border-l-[12px] border-[#c5a059] pl-6">Nossa História</h2>
-                <div class="space-y-8 text-xl md:text-2xl text-gray-800 leading-relaxed text-justify">
-                    <p>Organizada em 27 de março de 1947 como Igreja Batista Ebenezer, a SIBNF iniciou sua trajetória em uma sede alugada no centro de Nova Friburgo. Sob a liderança inicial do missionário Walter Mac Nealy e, posteriormente, do pastor Isidoro Pires dos Santos, a igreja expandiu sua atuação e fundou a Escola Batista.</p>
-                    <p>Em 1964, assumiu o pastor João José Soares Filho, cujo ministério de 40 anos foi marcado pela construção do atual templo em Olaria, inaugurado em 1993. Após seu falecimento em 2004, a igreja foi liderada pelo pastor Dejalmir da Cunha Waldhelm (2005-2010).</p>
-                    <p>Atualmente, sob a liderança do pastor Nilson Gomes Godoy, a igreja consolidou projetos de integração e reafirma seu compromisso com o evangelismo e a ação social em Nova Friburgo.</p>
+                <h2 class="text-3xl md:text-5xl font-bold text-[#19395f] border-l-8 border-[#c5a059] pl-6 mb-8">Nossa História</h2>
+                <p class="texto-grande text-gray-700 text-justify">Organizada em 27 de março de 1947, a SIBNF tem sido um pilar de fé em Nova Friburgo. Desde a construção do nosso templo em Olaria em 1993, servimos a comunidade com amor e fidelidade à Palavra.</p>
+            </section>
+
+            <section id="pastor" class="bg-[#f9f9f9] p-8 rounded-3xl flex flex-col md:flex-row gap-10 items-center border-y-2 border-gray-100">
+                <img src="Pastor.jpg" class="w-64 h-64 rounded-2xl object-cover shadow-xl border-4 border-white" onerror="this.src='pastor.jpg';">
+                <div class="text-center md:text-left">
+                    <h2 class="text-3xl font-bold text-[#19395f]">Pr. Nilson Godoy</h2>
+                    <p class="text-[#c5a059] font-black uppercase mb-4 tracking-widest">Pastor Presidente</p>
+                    <p class="texto-grande text-gray-600 italic">Dedicado ao ensino fiel das Escrituras e ao cuidado das famílias da nossa igreja.</p>
                 </div>
             </section>
 
-            <section id="pastor" class="bg-[#fdfcf0] p-8 md:p-14 rounded-3xl border-2 border-[#c5a059] shadow-lg">
-                <div class="flex flex-col gap-12">
-                    <div class="flex flex-col md:flex-row gap-12 items-center md:items-start w-full">
-                        <img src="pastor.jpg" class="w-64 h-64 md:w-80 md:h-80 object-cover rounded-2xl border-4 border-[#19395f] shadow-2xl" onerror="this.src='https://via.placeholder.com/400'"/>
-                        <div class="flex-1 text-center md:text-left">
-                            <h2 class="text-4xl md:text-5xl font-bold text-[#19395f] mb-4">Pr. Nilson Gomes Godoy</h2>
-                            <span class="text-[#c5a059] font-black text-xl uppercase mb-8 block tracking-widest">Pastor Presidente</span>
-                            <div class="text-gray-700 text-xl md:text-2xl text-justify space-y-8 leading-relaxed">
-                                <p>Bacharel em Teologia pelo Seminário Teológico Batista do Sul do Brasil e formado em Administração pela UFF, o pastor Nilson Godoy possui uma vasta trajetória ministerial, tendo liderado instituições e igrejas em todo o estado.</p>
-                                <p>Casado há 26 anos com Lilian Matilde e pai de três filhos, ele foca sua visão na plantação de novas frentes de pregação e no suporte sistemático às famílias da nossa comunidade.</p>
-                            </div>
+            <section id="familia" class="flex flex-col md:flex-row-reverse gap-10 items-center">
+                <img src="Igreja.jpg" class="w-full md:w-1/2 rounded-3xl shadow-lg border-2 border-gray-100" onerror="this.src='igreja.jpg';">
+                <div class="flex-1">
+                    <h2 class="text-3xl font-bold text-[#19395f] mb-6 italic">Uma Família para Pertencer</h2>
+                    <p class="texto-grande text-gray-700">Acreditamos que a igreja é mais que um prédio; é um corpo vivo de famílias que se apoiam. Aqui, você encontrará um lugar de acolhimento, oração e crescimento espiritual para todas as idades.</p>
+                </div>
+            </section>
+
+            <section id="ministerios" class="bg-[#19395f] text-white -mx-8 md:-mx-16 p-10 md:p-16">
+                <h2 class="text-3xl font-bold text-center mb-12 text-[#c5a059]">Nossos Ministérios</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="text-center p-4">
+                        <i data-lucide="users" class="mx-auto mb-4 w-10 h-10 text-[#c5a059]"></i>
+                        <h3 class="text-xl font-bold mb-2">Família</h3>
+                        <p class="opacity-80">Apoio e aconselhamento bíblico para lares cristãos.</p>
+                    </div>
+                    <div class="text-center p-4">
+                        <i data-lucide="music" class="mx-auto mb-4 w-10 h-10 text-[#c5a059]"></i>
+                        <h3 class="text-xl font-bold mb-2">Louvor</h3>
+                        <p class="opacity-80">Adoração através da música e das artes.</p>
+                    </div>
+                    <div class="text-center p-4">
+                        <i data-lucide="baby" class="mx-auto mb-4 w-10 h-10 text-[#c5a059]"></i>
+                        <h3 class="text-xl font-bold mb-2">Infantil</h3>
+                        <p class="opacity-80">Educação cristã lúdica para nossos pequenos.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="social">
+                <h2 class="text-4xl font-bold text-center text-[#19395f] mb-12">Nossas Redes</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                    <a href="https://instagram.com/sibnovafriburgo" target="_blank" class="social-card">
+                        <i data-lucide="instagram" class="text-pink-600"></i>
+                        <div>
+                            <p class="font-black text-xl">Instagram</p>
+                            <p class="text-gray-400 text-sm">@sibnovafriburgo</p>
                         </div>
-                    </div>
+                    </a>
+                    <a href="https://facebook.com/sibnf" target="_blank" class="social-card">
+                        <i data-lucide="facebook" class="text-blue-700"></i>
+                        <div>
+                            <p class="font-black text-xl">Facebook</p>
+                            <p class="text-gray-400 text-sm">facebook.com/sibnf</p>
+                        </div>
+                    </a>
+                    <a href="https://youtube.com/@sibnftv" target="_blank" class="social-card">
+                        <i data-lucide="youtube" class="text-red-600"></i>
+                        <div>
+                            <p class="font-black text-xl">YouTube</p>
+                            <p class="text-gray-400 text-sm">Cultos ao vivo</p>
+                        </div>
+                    </a>
+                    <a href="https://wa.me/5522981633108" target="_blank" class="social-card border-green-500">
+                        <i data-lucide="message-circle" class="text-green-500"></i>
+                        <div>
+                            <p class="font-black text-xl text-green-600">WhatsApp</p>
+                            <p class="text-gray-400 text-sm">Secretaria</p>
+                        </div>
+                    </a>
                 </div>
             </section>
 
-            <section id="agenda">
-                <h2 class="text-4xl md:text-5xl font-bold mb-12 text-center text-[#19395f]">Agenda Semanal</h2>
-                <div class="space-y-8 max-w-3xl mx-auto">
-                    <div class="flex flex-col md:flex-row items-start md:items-center bg-[#19395f] text-white p-8 rounded-2xl shadow-xl border-l-[16px] border-[#c5a059]">
-                        <div class="w-full md:w-1/3 font-black text-2xl md:text-3xl uppercase mb-2 md:mb-0">Domingo</div>
-                        <div class="text-xl md:text-2xl font-bold text-[#c5a059]">09h, 10h e 19h</div>
-                    </div>
-                    <div class="flex flex-col md:flex-row items-start md:items-center bg-white border-4 border-[#19395f] p-8 rounded-2xl shadow-md">
-                        <div class="w-full md:w-1/3 font-black text-2xl md:text-3xl uppercase mb-2 md:mb-0 text-[#19395f]">Quarta</div>
-                        <div class="text-xl md:text-2xl font-black">19h - Oração</div>
-                    </div>
-                    <div class="flex flex-col md:flex-row items-start md:items-center bg-white border-4 border-[#19395f] p-8 rounded-2xl shadow-md">
-                        <div class="w-full md:w-1/3 font-black text-2xl md:text-3xl uppercase mb-2 md:mb-0 text-[#19395f]">Sexta</div>
-                        <div class="text-xl md:text-2xl font-black text-red-800">19h - Embaixadores e Mensageiras</div>
-                    </div>
+            <div class="grid md:grid-cols-2 gap-10">
+                <div class="p-8 border-4 border-dotted border-[#19395f] rounded-3xl text-center bg-gray-50">
+                    <h3 class="font-bold text-xl mb-4">Dízimos e Ofertas</h3>
+                    <p class="text-xs uppercase font-black text-[#c5a059] mb-1">PIX (CNPJ)</p>
+                    <p class="font-black text-lg text-[#19395f]">28.601.953/0001-24</p>
                 </div>
-            </section>
-
-            <section id="ofertas" class="text-center p-10 md:p-16 border-4 border-dashed border-[#19395f] rounded-[40px] bg-gray-50 max-w-4xl mx-auto">
-                <h2 class="text-4xl md:text-5xl font-bold mb-6 text-[#19395f]">Dízimos e Ofertas</h2>
-                <p class="text-2xl mb-10 text-gray-600 italic">"Deus ama ao que dá com alegria"</p>
-                <div class="bg-white p-10 rounded-3xl shadow-2xl border-2 border-gray-100">
-                    <span class="block text-lg font-black text-[#c5a059] mb-4 uppercase tracking-widest">Chave PIX (CNPJ)</span>
-                    <span class="text-2xl md:text-4xl font-mono font-black text-[#19395f] no-break">28.601.953/0001-24</span>
-                    <p class="text-xl mt-6 text-gray-500 font-bold uppercase">Banco Itaú</p>
+                <div class="p-8 bg-[#19395f] text-white rounded-3xl text-center">
+                    <h3 class="font-bold text-xl mb-4">Cultos Principais</h3>
+                    <p class="text-lg">Dom: 09h e 19h</p>
+                    <p class="text-lg">Qua: 19:30h</p>
                 </div>
-            </section>
+            </div>
 
-            <section id="aniversariantes" class="bg-white border-y-8 md:border-8 border-[#19395f] -mx-6 md:mx-0 p-0 md:p-8 text-center">
-                <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#19395f] py-8 uppercase tracking-widest">Aniversariantes</h2>
-                <div class="calendar-container w-full bg-white">
+            <section id="aniversariantes" class="pb-16">
+                <h2 class="text-2xl font-bold text-center mb-8 uppercase tracking-widest">🎂 Próximos Aniversariantes</h2>
+                <div class="w-full h-[500px] border-4 border-[#19395f] rounded-2xl overflow-hidden shadow-xl">
                     <iframe src="https://calendar.google.com/calendar/embed?src=d524be653ddda530e5102dc37500585d123c519f01195a52f1ad5794163dd2a2%40group.calendar.google.com&ctz=America%2FSao_Paulo&hl=pt_BR&mode=AGENDA&showNav=0&showPrint=0&showTabs=0&showCalendars=0" style="border: 0" frameborder="0" scrolling="no"></iframe>
                 </div>
             </section>
 
-            <section id="social" class="pb-16">
-                <h2 class="text-4xl md:text-5xl font-bold mb-12 text-center text-[#19395f]">Nossas Redes</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <a href="https://www.instagram.com/sibnovafriburgo" target="_blank" class="big-social-btn secondary shadow-xl">
-                        <i data-lucide="instagram" class="w-10 h-10"></i>
-                        <div><strong class="text-2xl block">Instagram</strong><small class="text-lg">@sibnovafriburgo</small></div>
-                    </a>
-                    <a href="https://www.facebook.com/sibnf" target="_blank" class="big-social-btn primary shadow-xl">
-                        <i data-lucide="facebook" class="w-10 h-10"></i>
-                        <div><strong class="text-2xl block">Facebook</strong><small class="text-lg opacity-80">facebook.com/sibnf</small></div>
-                    </a>
-                    <a href="https://www.youtube.com/@sibnftv" target="_blank" class="big-social-btn primary shadow-xl">
-                        <i data-lucide="youtube" class="w-10 h-10"></i>
-                        <div><strong class="text-2xl block">YouTube</strong><small class="text-lg opacity-80">Cultos ao vivo</small></div>
-                    </a>
-                    <a href="https://wa.me/5522981633108" target="_blank" class="big-social-btn secondary border-[#25D366] text-[#1da851] shadow-xl">
-                        <i data-lucide="message-circle" class="w-10 h-10"></i>
-                        <div><strong class="text-2xl block">WhatsApp</strong><small class="text-lg">Secretaria</small></div>
-                    </a>
-                </div>
-            </section>
         </div>
 
-        <footer class="bg-[#19395f] text-white py-16 text-center border-t-[12px] border-[#c5a059]">
-            <p class="font-bold px-6 text-2xl md:text-3xl mb-4">Rua Pres. Vargas, 60 - Olaria</p>
-            <p class="text-xl md:text-2xl opacity-80 mb-8">Nova Friburgo - RJ</p>
-            <div class="h-2 w-32 bg-[#c5a059] mx-auto mb-8"></div>
-            <p class="text-lg opacity-50 uppercase tracking-widest font-bold">Desde 1947 servindo ao Senhor</p>
+        <footer class="bg-[#19395f] text-white py-12 text-center">
+            <p class="font-bold">Rua Pres. Vargas, 60 - Olaria</p>
+            <p class="opacity-40 text-sm mt-4 uppercase">Desde 1947 • SIBNF</p>
         </footer>
     </main>
 
