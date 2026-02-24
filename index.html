@@ -545,6 +545,27 @@
     entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('in'); });
   }, { threshold: 0.07 });
   document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
+
+  // Esconder botões flutuantes ao chegar no rodapé
+  var floats = document.querySelectorAll('.wa-float');
+  var footer = document.querySelector('footer');
+  var footerObs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      floats.forEach(function(btn) {
+        btn.style.transition = 'opacity 0.3s, transform 0.3s';
+        if (e.isIntersecting) {
+          btn.style.opacity = '0';
+          btn.style.pointerEvents = 'none';
+          btn.style.transform = 'translateY(16px)';
+        } else {
+          btn.style.opacity = '1';
+          btn.style.pointerEvents = '';
+          btn.style.transform = '';
+        }
+      });
+    });
+  }, { threshold: 0.1 });
+  footerObs.observe(footer);
 </script>
 
 <!-- BOTÕES FLUTUANTES -->
