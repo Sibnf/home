@@ -37,11 +37,14 @@
     /* NAV CARDS */
     .nav-card {
       background: white; border: 2px solid #19395f; border-radius: 10px;
-      padding: 10px 16px; text-align: center;
-      font-weight: 900; font-size: 0.75rem; text-decoration: none;
+      padding: 10px 8px; text-align: center;
+      font-weight: 900; font-size: 0.82rem; text-decoration: none;
       color: #19395f; transition: background 0.2s, color 0.2s;
       display: flex; align-items: center; justify-content: center;
-      min-height: 48px; line-height: 1.2;
+      min-height: 52px; line-height: 1.25;
+    }
+    @media (max-width: 480px) {
+      .nav-card { font-size: 0.78rem; padding: 10px 4px; }
     }
     .nav-card:hover, .nav-card.active { background: #19395f; color: white; }
     .nav-card.gold-card { background: #c5a059; border-color: #c5a059; color: white; }
@@ -159,7 +162,7 @@
       <a href="#agenda"          class="nav-card">Agenda</a>
       <a href="#ofertas"         class="nav-card">Ofertas</a>
       <a href="#social"          class="nav-card">Redes</a>
-      <a href="#aniversariantes" class="nav-card gold-card">&#127874; Aniversariantes</a>
+      <a href="#aniversariantes" class="nav-card gold-card"><span style="white-space:nowrap;">&#127874; Aniversariantes</span></a>
     </nav>
   </div>
 </header>
@@ -340,9 +343,9 @@
       <h2 class="section-title">D&iacute;zimos &amp; Ofertas</h2>
       <div class="border-4 border-dotted border-[#19395f] rounded-3xl p-8 text-center">
         <p class="font-black text-lg italic text-gray-500 mb-6">&ldquo;Deus ama ao que d&aacute; com alegria&rdquo;</p>
-        <div class="bg-[#fdfcf0] rounded-2xl inline-block px-8 py-6 shadow-inner">
+        <div class="bg-[#fdfcf0] rounded-2xl inline-block px-6 py-6 shadow-inner w-full max-w-sm">
           <p class="text-sm font-black gold uppercase tracking-widest mb-2">Chave PIX &mdash; CNPJ</p>
-          <p class="cnpj text-2xl md:text-3xl text-navy">28.601.953/0001-24</p>
+          <p class="cnpj text-navy" style="font-size: clamp(1.2rem, 5vw, 1.9rem);">28.601.953/0001-24</p>
           <p class="text-sm font-bold text-gray-400 uppercase mt-2">Segunda Igreja Batista &middot; Banco Ita&uacute;</p>
         </div>
         <div class="mt-5">
