@@ -1,166 +1,64 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="scroll-smooth">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Segunda Igreja Batista de Nova Friburgo</title>
 
   <link rel="icon" type="image/png" href="logo.png" />
-  <link rel="apple-touch-icon" href="logo.png" />
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#19395f" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="SIBNF" />
-
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Segunda Igreja Batista de Nova Friburgo" />
-  <meta property="og:description" content="Desde 1947 servindo ao Senhor em Nova Friburgo - RJ. Cultos aos domingos, quartas e sextas. Venha nos visitar!" />
-  <meta property="og:image" content="Igreja.jpg" />
-  <meta property="og:locale" content="pt_BR" />
-  <meta name="description" content="Desde 1947 servindo ao Senhor em Nova Friburgo - RJ. Cultos aos domingos, quartas e sextas." />
-  
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@400;700;900&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   
   <style>
-    body { font-family: 'Lato', sans-serif; background-color: #fdfcf0; color: #19395f; }
+    body { font-family: 'Lato', sans-serif; background-color: #fdfcf0; color: #19395f; margin: 0; }
     h1, h2, h3 { font-family: 'Playfair Display', serif; }
     .gold { color: #c5a059; }
     .bg-navy { background-color: #19395f; }
-    .bg-gold { background-color: #c5a059; }
-    .border-gold { border-color: #c5a059; }
-    .text-navy { color: #19395f; }
-    .cnpj { font-family: monospace; font-weight: 900; white-space: nowrap; }
-
-    /* NAV CARDS CORRIGIDOS PARA MOBILE */
     .nav-card {
-      background: white; border: 2px solid #19395f; border-radius: 10px;
-      padding: 10px 4px; text-align: center;
-      font-weight: 900; font-size: 0.75rem; text-decoration: none;
-      color: #19395f; transition: background 0.2s, color 0.2s;
-      display: flex; align-items: center; justify-content: center;
-      min-height: 52px; line-height: 1.1;
+      background: white; border: 2px solid #19395f; border-radius: 8px;
+      padding: 8px 2px; text-align: center; font-weight: 900; font-size: 0.7rem;
+      color: #19395f; text-decoration: none; display: flex; align-items: center; justify-content: center;
+      min-height: 45px;
     }
+    .nav-card:hover { background: #19395f; color: white; }
+    .gold-card { background: #c5a059; border-color: #c5a059; color: white; }
+    .section-title { font-size: 1.7rem; border-left: 6px solid #c5a059; padding-left: 1rem; margin-bottom: 1.5rem; }
     
-    /* Grid de navegação ajustada: 4 colunas no desktop, 2 no mobile muito pequeno para caber o texto */
+    /* Grid de navegação: 4 colunas no PC, 2 colunas no celular */
     .nav-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0.5rem;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
       width: 100%;
     }
-
-    @media (max-width: 640px) {
-      .nav-card { font-size: 0.72rem; }
+    @media (min-width: 640px) {
+      .nav-grid { grid-template-columns: repeat(4, 1fr); }
     }
 
-    .nav-card:hover, .nav-card.active { background: #19395f; color: white; }
-    .nav-card.gold-card { background: #c5a059; border-color: #c5a059; color: white; }
-
-    section[id] { scroll-margin-top: 0; }
-
-    .section-title {
-      font-size: 1.9rem; font-weight: 700;
-      border-left: 8px solid #c5a059;
-      padding-left: 1rem; margin-bottom: 1.5rem;
-    }
-
-    /* TIMELINE */
-    .tl-item { display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid #e5e0d5; }
-    .tl-item:last-child { border-bottom: none; }
-    .tl-year { font-family: 'Lato', sans-serif; font-weight: 900; color: #c5a059; min-width: 52px; font-size: 1rem; padding-top: 2px; }
-    .tl-desc { font-size: 1rem; color: #4b5563; line-height: 1.5; }
-
-    /* AGENDA */
-    .agenda-day { border-left: 6px solid #c5a059; padding-left: 1rem; margin-bottom: 1.5rem; }
-    .agenda-day h3 { font-family: 'Lato', sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; font-size: 1rem; color: #c5a059; margin-bottom: 0.5rem; }
-    .agenda-row { display: flex; gap: 1rem; align-items: baseline; padding: 8px 0; border-bottom: 1px solid #f0ebe0; }
-    .agenda-row:last-child { border-bottom: none; }
-    .agenda-hour { font-weight: 900; color: #19395f; min-width: 42px; font-size: 1.1rem; }
-    .agenda-name { color: #4b5563; font-size: 1.05rem; }
-
-    /* SOCIAL */
-    .soc-link {
-      display: flex; align-items: center; gap: 14px;
-      padding: 16px 18px; text-decoration: none;
-      border: 2px solid #e5e0d5; border-radius: 12px;
-      color: #19395f; font-weight: 700; font-size: 1.05rem;
-      transition: border-color 0.2s, background 0.2s, transform 0.15s;
-    }
-    .soc-link:hover { border-color: #19395f; background: #f0ede5; transform: translateX(4px); }
-    .soc-label { display: flex; flex-direction: column; }
-    .soc-label span { font-size: 0.82rem; font-weight: 400; color: #9ca3af; }
-    .soc-group-head { font-weight: 900; font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; color: #9ca3af; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #e5e0d5; }
-
-    /* VERSE BLOCK */
-    .verse-block { background: #19395f; color: white; border-radius: 1rem; padding: 2rem; }
-    .verse-text { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.45rem; line-height: 1.7; color: #e6c97a; }
-    .verse-ref { font-size: 0.95rem; font-weight: 900; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-top: 0.75rem; display: block; }
-
-    .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s ease; }
-    .reveal.in { opacity: 1; transform: none; }
-
-    .calendar-wrap { width: 100%; height: 480px; border: 3px solid #19395f; border-radius: 16px; overflow: hidden; }
-    .calendar-wrap iframe { width: 100%; height: 100%; border: 0; display: block; }
-
-    /* MINISTÉRIOS */
-    .min-btn {
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 12px; padding: 24px 12px;
-      background: #fdfcf0; border: 2px solid #e5e0d5; border-radius: 16px;
-      color: #19395f; font-weight: 700; font-size: 1rem; text-align: center;
-      text-decoration: none; cursor: default;
-      transition: background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-    }
-    .min-btn:hover {
-      background: #19395f; color: white; border-color: #19395f;
-      transform: translateY(-3px); box-shadow: 0 8px 20px rgba(25,57,95,0.18);
-    }
-    .min-btn .min-icon { color: #c5a059; transition: color 0.2s; }
-    .min-btn:hover .min-icon { color: #e6c97a; }
-
-    /* BOTÕES FLUTUANTES */
     .wa-float {
-      position: fixed; bottom: 24px; right: 24px; z-index: 999;
-      height: 56px; border-radius: 28px;
-      background: #25d366; color: white;
-      display: flex; align-items: center; gap: 10px;
-      padding: 0 20px 0 16px;
-      box-shadow: 0 4px 20px rgba(37,211,102,0.5);
-      text-decoration: none;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .wa-float:hover { transform: scale(1.05); box-shadow: 0 6px 28px rgba(37,211,102,0.65); }
-    .wa-label {
-      font-family: 'Lato', sans-serif;
-      font-size: 0.7rem; font-weight: 900;
-      line-height: 1.3; text-align: left;
-      text-transform: uppercase; letter-spacing: 0.05em;
+      position: fixed; bottom: 20px; right: 20px; background: #25d366; 
+      color: white; padding: 12px 20px; border-radius: 30px; 
+      display: flex; align-items: center; gap: 8px; font-weight: bold;
+      text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 100;
     }
   </style>
 </head>
 <body>
 
-<header class="bg-navy text-white sticky top-0 z-50 shadow-xl">
-  <div class="max-w-4xl mx-auto px-5 py-5 flex flex-col items-center">
-
-    <div class="flex items-center gap-4 mb-1">
-      <img src="logo.png" class="w-16 h-16 rounded-full border-2 border-gold bg-white object-cover p-1" alt="Logo SIBNF" />
+<header class="bg-navy text-white sticky top-0 z-50 p-4 shadow-lg">
+  <div class="max-w-4xl mx-auto flex flex-col items-center">
+    <div class="flex items-center gap-3 mb-2">
+      <img src="logo.png" class="w-12 h-12 rounded-full bg-white p-1" alt="Logo" />
       <div>
-        <h1 class="text-2xl leading-tight">Segunda Igreja Batista</h1>
-        <p class="gold font-black text-sm uppercase tracking-widest">Nova Friburgo — RJ</p>
-        <p class="text-white/40 text-sm tracking-widest">Desde 1947 servindo ao Senhor</p>
-        <p id="contador" class="gold text-xs font-bold mt-1"></p>
+        <h1 class="text-xl">Segunda Igreja Batista</h1>
+        <p class="gold text-xs font-bold uppercase">Nova Friburgo — RJ</p>
       </div>
     </div>
 
-    <nav class="nav-grid mt-4 max-w-2xl">
-      <a href="#biblia" class="nav-card">Bíblia</a>
+    <nav class="nav-grid">
       <a href="#historia" class="nav-card">História</a>
       <a href="#pastor" class="nav-card">Pastor</a>
-      <a href="#ministerios" class="nav-card">Ministérios</a>
       <a href="#agenda" class="nav-card">Agenda</a>
       <a href="#ofertas" class="nav-card">Ofertas</a>
       <a href="#social" class="nav-card">Redes</a>
@@ -169,39 +67,92 @@
   </div>
 </header>
 
-<main class="max-w-4xl mx-auto bg-white shadow-2xl">
-
+<main class="max-w-4xl mx-auto bg-white">
   <div class="aspect-video bg-black">
-    <iframe class="w-full h-full" src="https://www.youtube.com/embed/0FiADaWB7G8"
-            allowfullscreen allow="encrypted-media"></iframe>
+    <iframe class="w-full h-full" src="https://www.youtube.com/embed/0FiADaWB7G8" allowfullscreen></iframe>
   </div>
 
-  <div class="px-6 md:px-12 py-10 space-y-16">
-
-    <section id="biblia" class="reveal">
-      <h2 class="section-title">A Bíblia Sagrada</h2>
-      <div class="verse-block" style="position:relative; min-height:130px;">
-        <p class="verse-text" id="verse-text"></p>
-        <span class="verse-ref" id="verse-ref"></span>
-        <div style="display:flex; gap:10px; margin-top:1.2rem;">
-          <button onclick="changeVerse(-1)" style="background:rgba(255,255,255,0.12); border:none; color:rgba(255,255,255,0.6); border-radius:6px; padding:4px 12px; cursor:pointer; font-size:1rem;">←</button>
-          <button onclick="changeVerse(1)" style="background:rgba(255,255,255,0.12); border:none; color:rgba(255,255,255,0.6); border-radius:6px; padding:4px 12px; cursor:pointer; font-size:1rem;">→</button>
-          <span id="verse-dots" style="display:flex; align-items:center; gap:5px; margin-left:4px;"></span>
-        </div>
-      </div>
-      <p class="mt-5 text-gray-600 text-lg leading-relaxed">
-        Cremos que a Bíblia é a Palavra de Deus inspirada, inerrante e suficiente. Ela é a nossa única regra de fé e prática.
-      </p>
+  <div class="p-6 md:p-10 space-y-12">
+    
+    <section id="historia">
+      <h2 class="section-title">Nossa História</h2>
+      <p class="text-gray-700 leading-relaxed">Organizada em 27 de março de 1947 como Igreja Batista Ebenezer, a SIBNF iniciou sua trajetória no centro de Nova Friburgo. Hoje, sob a liderança do Pr. Nilson Gomes Godoy, a igreja reafirma seu compromisso com o evangelismo em Olaria.</p>
     </section>
 
-    <div class="reveal -mx-6 md:-mx-12">
-      <div class="relative overflow-hidden rounded-2xl shadow-lg">
-        <img src="igreja.jpg" alt="Congregação da SIBNF" class="w-full object-cover" style="max-height:420px; min-height:200px;" />
-        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#19395f]/80 to-transparent px-6 py-4">
-          <p class="text-white font-bold text-sm tracking-wide">Nossa Congregação — Segunda Igreja Batista de Nova Friburgo</p>
-        </div>
+    <section id="pastor" class="bg-gray-50 p-6 rounded-xl flex flex-col md:flex-row gap-6">
+      <img src="pastor.jpg" class="w-32 h-40 rounded-lg object-cover shadow-md" alt="Pastor" />
+      <div>
+        <h3 class="text-xl font-bold">Pr. Nilson Gomes Godoy</h3>
+        <p class="text-gray-600 mt-2">Bacharel em Teologia e Administração, foca seu ministério no suporte às famílias e na pregação da Palavra.</p>
       </div>
-    </div>
+    </section>
 
-    <section id="historia" class="reveal">
-      <h2 class="
+    <section id="agenda">
+      <h2 class="section-title">Agenda</h2>
+      <div class="grid gap-4 text-sm">
+        <div class="p-4 border-l-4 border-gold bg-gray-50"><strong>Domingo:</strong> 09h (EBD), 10h e 19h (Cultos)</div>
+        <div class="p-4 border-l-4 border-gold bg-gray-50"><strong>Quarta:</strong> 19h (Oração)</div>
+        <div class="p-4 border-l-4 border-gold bg-gray-50"><strong>Sexta:</strong> 19h (ER e MR)</div>
+      </div>
+    </section>
+
+    <section id="ofertas" class="text-center border-2 border-dashed border-navy p-8 rounded-2xl">
+      <p class="gold font-bold uppercase text-xs mb-2">Dízimos e Ofertas — PIX (CNPJ)</p>
+      <p class="text-xl font-black text-navy">28.601.953/0001-24</p>
+      <p class="text-xs text-gray-400 mt-2">Itaú • Segunda Igreja Batista</p>
+    </section>
+
+    <section id="social" class="space-y-3">
+      <h2 class="section-title">Redes Sociais</h2>
+      <a href="https://instagram.com/sibnovafriburgo" class="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50">
+        <i data-lucide="instagram" class="text-pink-500"></i> Igreja Geral (@sibnovafriburgo)
+      </a>
+      <a href="https://www.instagram.com/juventude_holy/" class="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50">
+        <i data-lucide="instagram" class="text-pink-500"></i> Juventude Holy (@juventude_holy)
+      </a>
+      <a href="https://instagram.com/embaixada_pr.joaojoses.filho" class="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50">
+        <i data-lucide="instagram" class="text-pink-500"></i> Embaixadores do Rei
+      </a>
+      <a href="https://youtube.com/@sibnftv" class="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50">
+        <i data-lucide="youtube" class="text-red-600"></i> YouTube (@sibnftv)
+      </a>
+    </section>
+
+    <section id="aniversariantes">
+      <h2 class="section-title">Aniversariantes</h2>
+      <div class="w-full h-80 border rounded-xl overflow-hidden shadow-inner">
+        <iframe src="https://calendar.google.com/calendar/embed?src=d524be653ddda530e5102dc37500585d123c519f01195a52f1ad5794163dd2a2%40group.calendar.google.com&ctz=America%2FSao_Paulo&hl=pt_BR&mode=AGENDA&showNav=0&showPrint=0&showTabs=0&showCalendars=0" class="w-full h-full"></iframe>
+      </div>
+    </section>
+
+  </div>
+
+  <footer class="bg-navy text-white p-10 text-center">
+    <p class="font-bold">Segunda Igreja Batista de Nova Friburgo</p>
+    <p class="text-xs opacity-60 mt-2">Rua Pres. Vargas, 60 — Olaria</p>
+  </footer>
+</main>
+
+<a href="https://wa.me/5522981633108" class="wa-float">
+  <i data-lucide="message-circle"></i> Pedido de Oração
+</a>
+
+<script>
+  lucide.createIcons();
+  
+  // Ajuste para o clique no menu não cobrir o título
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      const headerOffset = 140;
+      const elementPosition = target.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+    });
+  });
+</script>
+
+</body>
+</html>
