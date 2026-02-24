@@ -134,6 +134,7 @@
       line-height: 1.3; text-align: left;
       text-transform: uppercase; letter-spacing: 0.05em;
     }
+    .wa-float { transition: transform 0.2s, box-shadow 0.2s, opacity 0.3s; }
   </style>
 </head>
 <body>
@@ -153,25 +154,16 @@
       </div>
     </div>
 
-    <!-- Nav grid — 2 linhas de 4 + 1 linha com botão aniversariantes centralizado -->
-    <nav class="mt-4 w-full max-w-2xl">
-      <!-- Linha 1 -->
-      <div class="grid grid-cols-4 gap-2 mb-2">
-        <a href="#biblia"      class="nav-card">B&iacute;blia</a>
-        <a href="#historia"   class="nav-card">Hist&oacute;ria</a>
-        <a href="#pastor"     class="nav-card">Pastor</a>
-        <a href="#ministerios" class="nav-card">Minist&eacute;rios</a>
-      </div>
-      <!-- Linha 2 -->
-      <div class="grid grid-cols-3 gap-2 mb-2">
-        <a href="#agenda"  class="nav-card">Agenda</a>
-        <a href="#ofertas" class="nav-card">Ofertas</a>
-        <a href="#social"  class="nav-card">Redes</a>
-      </div>
-      <!-- Linha 3 — Aniversariantes ocupa toda a largura -->
-      <div>
-        <a href="#aniversariantes" class="nav-card gold-card w-full">&#127874; Aniversariantes</a>
-      </div>
+    <!-- Nav grid (mobile e desktop) -->
+    <nav class="grid grid-cols-4 gap-2 mt-4 w-full max-w-2xl">
+      <a href="#biblia"          class="nav-card">B&iacute;blia</a>
+      <a href="#historia"        class="nav-card">Hist&oacute;ria</a>
+      <a href="#pastor"          class="nav-card">Pastor</a>
+      <a href="#ministerios"     class="nav-card">Minist&eacute;rios</a>
+      <a href="#agenda"          class="nav-card">Agenda</a>
+      <a href="#ofertas"         class="nav-card">Ofertas</a>
+      <a href="#social"          class="nav-card">Redes</a>
+      <a href="#aniversariantes" class="nav-card gold-card"><span style="white-space:nowrap;">&#127874; Aniversariantes</span></a>
     </nav>
   </div>
 </header>
@@ -249,7 +241,7 @@
           <p class="gold font-bold text-base uppercase tracking-wide mb-4">Segunda Igreja Batista de Nova Friburgo</p>
           <div class="text-gray-600 text-base leading-relaxed space-y-3">
             <p>Bacharel em Teologia pelo Semin&aacute;rio Teol&oacute;gico Batista do Sul do Brasil e formado em Administra&ccedil;&atilde;o pela UFF, o pastor Nilson Godoy possui uma vasta trajet&oacute;ria ministerial, tendo liderado institui&ccedil;&otilde;es e igrejas em todo o estado do Rio de Janeiro.</p>
-            <p>Casado h&aacute; 26 anos com Lilian Matilde e pai de tr&ecirc;s filhos, ele foca sua vis&atilde;o na planta&ccedil;&atilde;o de novas frentes de prega&ccedil;&atilde;o e no suporte sistem&aacute;tico &agrave;s fam&iacute;lias da nossa comunidade.</p>
+            <p>Casado h&aacute; 26 anos com Lilia Matilde e pai de tr&ecirc;s filhos, ele foca sua vis&atilde;o na planta&ccedil;&atilde;o de novas frentes de prega&ccedil;&atilde;o e no suporte sistem&aacute;tico &agrave;s fam&iacute;lias da nossa comunidade.</p>
           </div>
         </div>
       </div>
@@ -378,7 +370,6 @@
             <i data-lucide="instagram" class="text-pink-500 w-7 h-7 flex-shrink-0"></i>
             <span class="soc-label">Igreja Geral <span>@sibnovafriburgo</span></span>
           </a>
-          <!-- ✅ NOVO: Juventude Holy -->
           <a href="https://instagram.com/juventude_holy" target="_blank" rel="noopener" class="soc-link">
             <i data-lucide="instagram" class="text-pink-500 w-7 h-7 flex-shrink-0"></i>
             <span class="soc-label">Juventude Holy <span>@juventude_holy</span></span>
@@ -472,6 +463,7 @@
     { texto: '\u201cN\u00e3o vos inquieteis com coisa alguma; antes, as vossas peti\u00e7\u00f5es sejam conhecidas diante de Deus pela ora\u00e7\u00e3o e s\u00faplica, com a\u00e7\u00e3o de gra\u00e7as.\u201d', ref: 'Filipenses 4:6' }
   ];
 
+  // Escolhe versículo baseado na semana do ano (troca semanalmente)
   var semana = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 1)) / 604800000);
   var versoAtual = semana % versos.length;
 
@@ -479,6 +471,7 @@
     var v = versos[versoAtual];
     var tEl = document.getElementById('verse-text');
     var rEl = document.getElementById('verse-ref');
+    // fade out
     tEl.style.transition = 'opacity 0.35s';
     rEl.style.transition = 'opacity 0.35s';
     tEl.style.opacity = '0';
@@ -489,6 +482,7 @@
       tEl.style.opacity = '1';
       rEl.style.opacity = '1';
     }, 350);
+    // dots
     var dots = document.getElementById('verse-dots');
     dots.innerHTML = '';
     versos.forEach(function(_, i) {
@@ -507,7 +501,7 @@
 
   // ── CONTADOR DE FUNDAÇÃO ──────────────────────────
   function updateContador() {
-    var fundacao = new Date(1947, 2, 27);
+    var fundacao = new Date(1947, 2, 27); // 27 mar 1947
     var hoje = new Date();
     var anos = hoje.getFullYear() - fundacao.getFullYear();
     var m = hoje.getMonth() - fundacao.getMonth();
@@ -519,7 +513,8 @@
   }
   updateContador();
 
-  // ── SCROLL MARGIN DINÂMICO ────────────────────────
+  // ── RESTANTE ─────────────────────────────────────
+  // Scroll margin dinâmico baseado na altura real do cabeçalho
   function updateScrollMargin() {
     var h = document.querySelector('header').offsetHeight + 48;
     document.querySelectorAll('section[id]').forEach(function(el) {
@@ -546,28 +541,16 @@
   }, { threshold: 0.07 });
   document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
 
-  // Esconder botões flutuantes ao chegar no rodapé
-  var floats = document.querySelectorAll('.wa-float');
-  var footer = document.querySelector('footer');
+  // Esconde botões flutuantes quando o rodapé aparece
   var footerObs = new IntersectionObserver(function(entries) {
-    entries.forEach(function(e) {
-      floats.forEach(function(btn) {
-        btn.style.transition = 'opacity 0.3s, transform 0.3s';
-        if (e.isIntersecting) {
-          btn.style.opacity = '0';
-          btn.style.pointerEvents = 'none';
-          btn.style.transform = 'translateY(16px)';
-        } else {
-          btn.style.opacity = '1';
-          btn.style.pointerEvents = '';
-          btn.style.transform = '';
-        }
-      });
+    var hidden = entries[0].isIntersecting;
+    document.querySelectorAll('.wa-float').forEach(function(btn) {
+      btn.style.opacity = hidden ? '0' : '1';
+      btn.style.pointerEvents = hidden ? 'none' : 'auto';
     });
   }, { threshold: 0.1 });
-  footerObs.observe(footer);
+  footerObs.observe(document.querySelector('footer'));
 </script>
-
 <!-- BOTÕES FLUTUANTES -->
 <a href="https://maps.google.com/?q=Rua+Presidente+Vargas+60+Olaria+Nova+Friburgo+RJ"
    target="_blank" rel="noopener" class="wa-float" title="Como chegar"
@@ -578,6 +561,7 @@
   <span class="wa-label">Como<br>Chegar</span>
 </a>
 
+<!-- BOTÃO FLUTUANTE WHATSAPP -->
 <a href="https://wa.me/5522981633108?text=Ol%C3%A1%2C+gostaria+de+fazer+um+pedido+de+ora%C3%A7%C3%A3o." target="_blank" rel="noopener" class="wa-float" title="Pedido de ora&ccedil;&atilde;o ou contato">
   <svg viewBox="0 0 24 24" fill="currentColor">
     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
