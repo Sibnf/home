@@ -1,558 +1,159 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="scroll-smooth">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Segunda Igreja Batista de Nova Friburgo</title>
+  <title>SIBNF - Segunda Igreja Batista</title>
 
-  <!-- Favicon & PWA -->
-  <link rel="icon" type="image/png" href="logo.png" />
-  <link rel="apple-touch-icon" href="logo.png" />
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#19395f" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="SIBNF" />
-
-  <!-- Open Graph / compartilhamento no WhatsApp e Facebook -->
-  <meta property="og:type"        content="website" />
-  <meta property="og:title"       content="Segunda Igreja Batista de Nova Friburgo" />
-  <meta property="og:description" content="Desde 1947 servindo ao Senhor em Nova Friburgo - RJ. Cultos aos domingos, quartas e sextas. Venha nos visitar!" />
-  <meta property="og:image"       content="Igreja.jpg" />
-  <meta property="og:locale"      content="pt_BR" />
-  <meta name="description"        content="Desde 1947 servindo ao Senhor em Nova Friburgo - RJ. Cultos aos domingos, quartas e sextas." />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@400;700;900&display=swap" rel="stylesheet" />
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  
   <style>
-    body        { font-family: 'Lato', sans-serif; background-color: #fdfcf0; color: #19395f; }
-    h1, h2, h3  { font-family: 'Playfair Display', serif; }
-    .gold       { color: #c5a059; }
-    .bg-navy    { background-color: #19395f; }
-    .bg-gold    { background-color: #c5a059; }
-    .border-gold{ border-color: #c5a059; }
-    .text-navy  { color: #19395f; }
-    .cnpj       { font-family: monospace; font-weight: 900; white-space: nowrap; }
+    body { font-family: 'Lato', sans-serif; background-color: #fdfcf0; color: #19395f; }
+    h1, h2, h3 { font-family: 'Playfair Display', serif; }
+    .gold { color: #c5a059; }
+    .bg-navy { background-color: #19395f; }
+    
+    /* NAV GRID - Ajustado para 2 colunas no mobile para caber o texto */
+    .nav-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      width: 100%;
+    }
+    @media (min-width: 640px) {
+      .nav-grid { grid-template-columns: repeat(4, 1fr); }
+    }
 
-    /* NAV CARDS */
     .nav-card {
       background: white; border: 2px solid #19395f; border-radius: 10px;
-      padding: 10px 8px; text-align: center;
-      font-weight: 900; font-size: 0.82rem; text-decoration: none;
-      color: #19395f; transition: background 0.2s, color 0.2s;
-      display: flex; align-items: center; justify-content: center;
-      min-height: 52px; line-height: 1.25;
+      padding: 12px 4px; text-align: center; font-weight: 900; font-size: 0.85rem;
+      color: #19395f; text-decoration: none; display: flex; align-items: center; justify-content: center;
     }
-    @media (max-width: 480px) {
-      .nav-card { font-size: 0.78rem; padding: 10px 4px; }
-    }
-    .nav-card:hover, .nav-card.active { background: #19395f; color: white; }
-    .nav-card.gold-card { background: #c5a059; border-color: #c5a059; color: white; }
-
-    /* SCROLL OFFSET — calculado dinamicamente pelo JS */
-    section[id] { scroll-margin-top: 0; }
-
-    /* SECTION DIVIDER */
+    .gold-card { background: #c5a059; border-color: #c5a059; color: white; }
+    
     .section-title {
-      font-size: 1.9rem; font-weight: 700;
-      border-left: 8px solid #c5a059;
-      padding-left: 1rem; margin-bottom: 1.5rem;
+      font-size: 1.8rem; border-left: 8px solid #c5a059; padding-left: 1rem; margin-bottom: 1.5rem;
     }
 
-    /* TIMELINE */
-    .tl-item { display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid #e5e0d5; }
-    .tl-item:last-child { border-bottom: none; }
-    .tl-year { font-family: 'Lato', sans-serif; font-weight: 900; color: #c5a059; min-width: 52px; font-size: 1rem; padding-top: 2px; }
-    .tl-desc { font-size: 1rem; color: #4b5563; line-height: 1.5; }
-
-    /* AGENDA */
-    .agenda-day { border-left: 6px solid #c5a059; padding-left: 1rem; margin-bottom: 1.5rem; }
-    .agenda-day h3 { font-family: 'Lato', sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; font-size: 1rem; color: #c5a059; margin-bottom: 0.5rem; }
-    .agenda-row { display: flex; gap: 1rem; align-items: baseline; padding: 8px 0; border-bottom: 1px solid #f0ebe0; }
-    .agenda-row:last-child { border-bottom: none; }
-    .agenda-hour { font-weight: 900; color: #19395f; min-width: 42px; font-size: 1.1rem; }
-    .agenda-name { color: #4b5563; font-size: 1.05rem; }
-
-    /* SOCIAL */
     .soc-link {
-      display: flex; align-items: center; gap: 14px;
-      padding: 16px 18px; text-decoration: none;
-      border: 2px solid #e5e0d5; border-radius: 12px;
-      color: #19395f; font-weight: 700; font-size: 1.05rem;
-      transition: border-color 0.2s, background 0.2s, transform 0.15s;
-    }
-    .soc-link:hover { border-color: #19395f; background: #f0ede5; transform: translateX(4px); }
-    .soc-label { display: flex; flex-direction: column; }
-    .soc-label span { font-size: 0.88rem; font-weight: 400; color: #9ca3af; }
-    .soc-group-head { font-weight: 900; font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; color: #9ca3af; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #e5e0d5; }
-
-    /* VERSE BLOCK */
-    .verse-block { background: #19395f; color: white; border-radius: 1rem; padding: 2rem; }
-    .verse-text { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.45rem; line-height: 1.7; color: #e6c97a; }
-    .verse-ref { font-size: 0.95rem; font-weight: 900; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-top: 0.75rem; display: block; }
-
-    /* REVEAL */
-    .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s ease; }
-    .reveal.in { opacity: 1; transform: none; }
-
-    /* CALENDAR */
-    .calendar-wrap { width: 100%; height: 480px; border: 3px solid #19395f; border-radius: 16px; overflow: hidden; }
-    .calendar-wrap iframe { width: 100%; height: 100%; border: 0; display: block; }
-
-    /* MINISTÉRIOS */
-    .min-btn {
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 12px; padding: 24px 12px;
-      background: #fdfcf0; border: 2px solid #e5e0d5; border-radius: 16px;
-      color: #19395f; font-weight: 700; font-size: 1rem; text-align: center;
-      text-decoration: none; cursor: default;
-      transition: background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-    }
-    .min-btn:hover {
-      background: #19395f; color: white; border-color: #19395f;
-      transform: translateY(-3px); box-shadow: 0 8px 20px rgba(25,57,95,0.18);
-    }
-    .min-btn .min-icon { color: #c5a059; transition: color 0.2s; }
-    .min-btn:hover .min-icon { color: #e6c97a; }
-
-    /* BOTÃO FLUTUANTE WHATSAPP */
-    .wa-float {
-      position: fixed; bottom: 24px; right: 24px; z-index: 999;
-      height: 56px; border-radius: 28px;
-      background: #25d366; color: white;
-      display: flex; align-items: center; gap: 10px;
-      padding: 0 20px 0 16px;
-      box-shadow: 0 4px 20px rgba(37,211,102,0.5);
-      text-decoration: none;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .wa-float:hover { transform: scale(1.05); box-shadow: 0 6px 28px rgba(37,211,102,0.65); }
-    .wa-float svg { width: 26px; height: 26px; flex-shrink: 0; }
-    .wa-label {
-      font-family: 'Lato', sans-serif;
-      font-size: 0.7rem; font-weight: 900;
-      line-height: 1.3; text-align: left;
-      text-transform: uppercase; letter-spacing: 0.05em;
+      display: flex; align-items: center; gap: 12px; padding: 15px;
+      border: 2px solid #e5e0d5; border-radius: 12px; text-decoration: none; color: #19395f; font-weight: 700;
     }
   </style>
 </head>
 <body>
 
-<!-- ════════════ HEADER / NAV ════════════ -->
-<header class="bg-navy text-white sticky top-0 z-50 shadow-xl">
-  <div class="max-w-4xl mx-auto px-5 py-5 flex flex-col items-center">
-
-    <!-- Logo + nome -->
-    <div class="flex items-center gap-4 mb-1">
-      <img src="logo.png" class="w-16 h-16 rounded-full border-2 border-gold bg-white object-cover p-1" alt="Logo SIBNF" />
+<header class="bg-navy text-white sticky top-0 z-50 p-5 shadow-xl">
+  <div class="max-w-4xl mx-auto flex flex-col items-center">
+    <div class="flex items-center gap-4 mb-3">
+      <img src="logo.png" class="w-14 h-14 rounded-full bg-white p-1" alt="Logo" />
       <div>
-        <h1 class="text-2xl leading-tight">Segunda Igreja Batista</h1>
-        <p class="gold font-black text-sm uppercase tracking-widest">Nova Friburgo &mdash; RJ</p>
-        <p class="text-white/40 text-sm tracking-widest">Desde 1947 servindo ao Senhor</p>
-        <p id="contador" class="gold text-xs font-bold mt-1"></p>
+        <h1 class="text-xl md:text-2xl">Segunda Igreja Batista</h1>
+        <p class="gold text-xs font-bold uppercase tracking-widest">Nova Friburgo — RJ</p>
       </div>
     </div>
 
-    <!-- Nav grid (mobile e desktop) -->
-    <nav class="grid grid-cols-4 gap-2 mt-4 w-full max-w-2xl">
-      <a href="#biblia"          class="nav-card">B&iacute;blia</a>
-      <a href="#historia"        class="nav-card">Hist&oacute;ria</a>
-      <a href="#pastor"          class="nav-card">Pastor</a>
-      <a href="#ministerios"     class="nav-card">Minist&eacute;rios</a>
-      <a href="#agenda"          class="nav-card">Agenda</a>
-      <a href="#ofertas"         class="nav-card">Ofertas</a>
-      <a href="#social"          class="nav-card">Redes</a>
-      <a href="#aniversariantes" class="nav-card gold-card"><span style="white-space:nowrap;">&#127874; Aniversariantes</span></a>
+    <nav class="nav-grid max-w-2xl">
+      <a href="#historia" class="nav-card">História</a>
+      <a href="#pastor" class="nav-card">Pastor</a>
+      <a href="#agenda" class="nav-card">Agenda</a>
+      <a href="#ofertas" class="nav-card">Ofertas</a>
+      <a href="#social" class="nav-card">Redes Sociais</a>
+      <a href="#aniversariantes" class="nav-card gold-card">🎂 Aniversariantes</a>
     </nav>
   </div>
 </header>
 
-<!-- ════════════ MAIN ════════════ -->
-<main class="max-w-4xl mx-auto bg-white shadow-2xl">
-
-  <!-- VIDEO -->
+<main class="max-w-4xl mx-auto bg-white min-h-screen">
   <div class="aspect-video bg-black">
-    <iframe class="w-full h-full" src="https://www.youtube.com/embed/0FiADaWB7G8"
-            allowfullscreen allow="encrypted-media"></iframe>
+    <iframe class="w-full h-full" src="https://www.youtube.com/embed/0FiADaWB7G8" allowfullscreen></iframe>
   </div>
 
-  <div class="px-6 md:px-12 py-10 space-y-16">
-
-    <!-- ── A BÍBLIA ── -->
-    <section id="biblia" class="reveal">
-      <h2 class="section-title">A B&iacute;blia Sagrada</h2>
-      <div class="verse-block" style="position:relative; min-height:130px;">
-        <p class="verse-text" id="verse-text"></p>
-        <span class="verse-ref" id="verse-ref"></span>
-        <!-- botões de navegação -->
-        <div style="display:flex; gap:10px; margin-top:1.2rem;">
-          <button onclick="changeVerse(-1)" style="background:rgba(255,255,255,0.12); border:none; color:rgba(255,255,255,0.6); border-radius:6px; padding:4px 12px; cursor:pointer; font-size:1rem; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.22)'" onmouseout="this.style.background='rgba(255,255,255,0.12)'">&#8592;</button>
-          <button onclick="changeVerse(1)"  style="background:rgba(255,255,255,0.12); border:none; color:rgba(255,255,255,0.6); border-radius:6px; padding:4px 12px; cursor:pointer; font-size:1rem; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.22)'" onmouseout="this.style.background='rgba(255,255,255,0.12)'">&#8594;</button>
-          <span id="verse-dots" style="display:flex; align-items:center; gap:5px; margin-left:4px;"></span>
-        </div>
-      </div>
-      <p class="mt-5 text-gray-600 text-lg leading-relaxed">
-        Cremos que a B&iacute;blia &eacute; a Palavra de Deus inspirada, inerrante e suficiente. Ela &eacute; a nossa &uacute;nica regra de f&eacute; e pr&aacute;tica.
-      </p>
+  <div class="p-6 md:p-12 space-y-16">
+    
+    <section id="historia">
+      <h2 class="section-title">Nossa História</h2>
+      <p class="text-gray-600 text-lg leading-relaxed">Organizada em 27 de março de 1947, a SIBNF iniciou sua trajetória no centro de Nova Friburgo. Hoje, sob a liderança do pastor Nilson Gomes Godoy, a igreja reafirma seu compromisso com o evangelismo e a ação social.</p>
     </section>
 
-    <!-- ── FOTO DA CONGREGAÇÃO ── -->
-    <div class="reveal -mx-6 md:-mx-12">
-      <div class="relative overflow-hidden rounded-2xl shadow-lg">
-        <img src="igreja.jpg" alt="Congrega&ccedil;&atilde;o da SIBNF" class="w-full object-cover" style="max-height:420px; min-height:200px;" />
-        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#19395f]/80 to-transparent px-6 py-4">
-          <p class="text-white font-bold text-sm tracking-wide">Nossa Congrega&ccedil;&atilde;o &mdash; Segunda Igreja Batista de Nova Friburgo</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── HISTÓRIA ── -->
-    <section id="historia" class="reveal">
-      <h2 class="section-title">Nossa Hist&oacute;ria</h2>
-      <div class="grid md:grid-cols-[1fr_260px] gap-8 items-start">
-        <!-- Texto -->
-        <div class="space-y-4 text-gray-600 text-lg leading-relaxed">
-          <p>Organizada em 27 de mar&ccedil;o de 1947 como Igreja Batista Ebenezer, a SIBNF iniciou sua trajet&oacute;ria em uma sede alugada no centro de Nova Friburgo. Sob a lideran&ccedil;a inicial do mission&aacute;rio Walter Mac Nealy e, posteriormente, do pastor Isidoro Pires dos Santos, a igreja expandiu sua atua&ccedil;&atilde;o e fundou a Escola Batista.</p>
-          <p>Em 1964, assumiu o pastor Jo&atilde;o Jos&eacute; Soares Filho, cujo minist&eacute;rio de 40 anos foi marcado pela constru&ccedil;&atilde;o do atual templo em Olaria, inaugurado em 1993. Ap&oacute;s seu falecimento em 2004, a igreja foi liderada pelo pastor Dejalmir da Cunha Waldhelm (2005&ndash;2010).</p>
-          <p>Atualmente, sob a lideran&ccedil;a do pastor Nilson Gomes Godoy, a igreja consolidou projetos de integra&ccedil;&atilde;o e reafirma seu compromisso com o evangelismo e a a&ccedil;&atilde;o social em Nova Friburgo.</p>
-        </div>
-        <!-- Timeline -->
-        <aside class="bg-[#fdfcf0] border-2 border-[#e5e0d5] rounded-2xl p-5 self-start sticky top-[120px]">
-          <p class="font-black text-sm uppercase tracking-widest gold mb-3">Linha do Tempo</p>
-          <div class="tl-item"><span class="tl-year">1947</span><span class="tl-desc">Funda&ccedil;&atilde;o como Igreja Batista Ebenezer. Mission&aacute;rio Walter Mac Nealy.</span></div>
-          <div class="tl-item"><span class="tl-year">1964</span><span class="tl-desc">Pr. Jo&atilde;o Jos&eacute; Soares Filho assume.</span></div>
-          <div class="tl-item"><span class="tl-year">1993</span><span class="tl-desc">Inaugura&ccedil;&atilde;o do templo em Olaria.</span></div>
-          <div class="tl-item"><span class="tl-year">2004</span><span class="tl-desc">Falecimento do Pr. Jo&atilde;o Jos&eacute; Soares Filho.</span></div>
-          <div class="tl-item"><span class="tl-year">2005</span><span class="tl-desc">Pr. Dejalmir Waldhelm (at&eacute; 2010).</span></div>
-          <div class="tl-item"><span class="tl-year">Hoje</span><span class="tl-desc">Pr. Nilson Godoy &mdash; evangelismo e a&ccedil;&atilde;o social.</span></div>
-        </aside>
-      </div>
-    </section>
-
-    <!-- ── PASTOR ── -->
-    <section id="pastor" class="reveal">
-      <h2 class="section-title">O Pastor</h2>
-      <div class="bg-gray-50 rounded-3xl p-8 flex flex-col md:flex-row gap-8 items-start">
-        <img src="pastor.jpg" class="w-48 h-64 rounded-2xl object-cover shadow-lg flex-shrink-0" alt="Pr. Nilson Gomes Godoy" />
-        <div>
-          <span class="inline-block bg-gold text-white text-sm font-black uppercase tracking-widest px-4 py-2 rounded-full mb-3">Pastor Presidente</span>
-          <h3 class="text-2xl font-bold text-navy mb-1">Pr. Nilson Gomes Godoy</h3>
-          <p class="gold font-bold text-base uppercase tracking-wide mb-4">Segunda Igreja Batista de Nova Friburgo</p>
-          <div class="text-gray-600 text-base leading-relaxed space-y-3">
-            <p>Bacharel em Teologia pelo Semin&aacute;rio Teol&oacute;gico Batista do Sul do Brasil e formado em Administra&ccedil;&atilde;o pela UFF, o pastor Nilson Godoy possui uma vasta trajet&oacute;ria ministerial, tendo liderado institui&ccedil;&otilde;es e igrejas em todo o estado do Rio de Janeiro.</p>
-            <p>Casado h&aacute; 26 anos com Lilian Matilde e pai de tr&ecirc;s filhos, ele foca sua vis&atilde;o na planta&ccedil;&atilde;o de novas frentes de prega&ccedil;&atilde;o e no suporte sistem&aacute;tico &agrave;s fam&iacute;lias da nossa comunidade.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── MINISTÉRIOS ── -->
-    <section id="ministerios" class="reveal">
-      <h2 class="section-title">Nossos Minist&eacute;rios</h2>
-      <p class="text-gray-500 mb-6">Cada minist&eacute;rio &eacute; uma express&atilde;o do amor de Deus servindo &agrave; nossa comunidade.</p>
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-
-        <div class="min-btn">
-          <i data-lucide="heart" class="min-icon w-10 h-10"></i>
-          <span>A&ccedil;&atilde;o Social</span>
-        </div>
-
-        <div class="min-btn">
-          <i data-lucide="settings" class="min-icon w-10 h-10"></i>
-          <span>Administra&ccedil;&atilde;o</span>
-        </div>
-
-        <div class="min-btn">
-          <i data-lucide="music" class="min-icon w-10 h-10"></i>
-          <span>Adora&ccedil;&atilde;o</span>
-        </div>
-
-        <div class="min-btn">
-          <i data-lucide="users" class="min-icon w-10 h-10"></i>
-          <span>Comunh&atilde;o</span>
-        </div>
-
-        <div class="min-btn">
-          <i data-lucide="radio" class="min-icon w-10 h-10"></i>
-          <span>Comunica&ccedil;&atilde;o</span>
-        </div>
-
-        <div class="min-btn">
-          <i data-lucide="book-open" class="min-icon w-10 h-10"></i>
-          <span>Educa&ccedil;&atilde;o Crist&atilde;</span>
-        </div>
-
-        <div class="min-btn">
-          <i data-lucide="megaphone" class="min-icon w-10 h-10"></i>
-          <span>Evangelismo</span>
-        </div>
-
-        <div class="min-btn">
-          <i data-lucide="home" class="min-icon w-10 h-10"></i>
-          <span>Fam&iacute;lia</span>
-        </div>
-
-        <div class="min-btn">
-          <i data-lucide="globe" class="min-icon w-10 h-10"></i>
-          <span>Miss&otilde;es</span>
-        </div>
-
-        <div class="min-btn">
-          <i data-lucide="sparkles" class="min-icon w-10 h-10"></i>
-          <span>Ora&ccedil;&atilde;o</span>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ── AGENDA ── -->
-    <section id="agenda" class="reveal">
-      <h2 class="section-title">Agenda Semanal</h2>
-      <p class="text-gray-500 mb-6">Venha nos visitar. Todos s&atilde;o bem-vindos.</p>
-      <div class="grid md:grid-cols-3 gap-6">
-
-        <div class="bg-[#fdfcf0] border-2 border-[#e5e0d5] rounded-2xl p-5">
-          <div class="agenda-day">
-            <h3>&#9788; Domingo</h3>
-            <div class="agenda-row"><span class="agenda-hour">09h</span><span class="agenda-name">Escola B&iacute;blica Dominical</span></div>
-            <div class="agenda-row"><span class="agenda-hour">10h</span><span class="agenda-name">Culto da Manh&atilde;</span></div>
-            <div class="agenda-row"><span class="agenda-hour">19h</span><span class="agenda-name">Culto de Adora&ccedil;&atilde;o e Prega&ccedil;&atilde;o</span></div>
-          </div>
-        </div>
-
-        <div class="bg-[#fdfcf0] border-2 border-[#e5e0d5] rounded-2xl p-5">
-          <div class="agenda-day">
-            <h3>&#9684; Quarta-feira</h3>
-            <div class="agenda-row"><span class="agenda-hour">19h</span><span class="agenda-name">Reuni&atilde;o de Ora&ccedil;&atilde;o e Estudo B&iacute;blico</span></div>
-          </div>
-        </div>
-
-        <div class="bg-[#fdfcf0] border-2 border-[#e5e0d5] rounded-2xl p-5">
-          <div class="agenda-day">
-            <h3>&#10022; Sexta-feira</h3>
-            <div class="agenda-row"><span class="agenda-hour">19h</span><span class="agenda-name">Embaixadores do Rei</span></div>
-            <div class="agenda-row"><span class="agenda-hour">19h</span><span class="agenda-name">Mensageiras do Rei</span></div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ── OFERTAS ── -->
-    <section id="ofertas" class="reveal">
-      <h2 class="section-title">D&iacute;zimos &amp; Ofertas</h2>
-      <div class="border-4 border-dotted border-[#19395f] rounded-3xl p-8 text-center">
-        <p class="font-black text-lg italic text-gray-500 mb-6">&ldquo;Deus ama ao que d&aacute; com alegria&rdquo;</p>
-        <div class="bg-[#fdfcf0] rounded-2xl inline-block px-6 py-6 shadow-inner w-full max-w-sm">
-          <p class="text-sm font-black gold uppercase tracking-widest mb-2">Chave PIX &mdash; CNPJ</p>
-          <p class="cnpj text-navy" style="font-size: clamp(1.2rem, 5vw, 1.9rem);">28.601.953/0001-24</p>
-          <p class="text-sm font-bold text-gray-400 uppercase mt-2">Segunda Igreja Batista &middot; Banco Ita&uacute;</p>
-        </div>
-        <div class="mt-5">
-          <button id="copyBtn"
-            class="inline-flex items-center gap-2 bg-navy text-white text-xs font-black uppercase tracking-widest px-6 py-3 rounded-full hover:bg-[#1e4a7a] transition">
-            &#128203; Copiar CNPJ
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── REDES SOCIAIS ── -->
-    <section id="social" class="reveal">
-      <h2 class="section-title">Redes Sociais &amp; Minist&eacute;rios</h2>
-
-      <!-- Instagram -->
-      <div class="mb-6">
-        <p class="soc-group-head">Instagram</p>
-        <div class="flex flex-col gap-3">
-          <a href="https://instagram.com/sibnovafriburgo" target="_blank" rel="noopener" class="soc-link">
-            <i data-lucide="instagram" class="text-pink-500 w-7 h-7 flex-shrink-0"></i>
-            <span class="soc-label">Igreja Geral <span>@sibnovafriburgo</span></span>
-          </a>
-          <a href="https://instagram.com/embaixada_pr.joaojoses.filho" target="_blank" rel="noopener" class="soc-link">
-            <i data-lucide="instagram" class="text-pink-500 w-7 h-7 flex-shrink-0"></i>
-            <span class="soc-label">Embaixadores do Rei <span>@embaixada_pr.joaojoses.filho</span></span>
-          </a>
-          <a href="https://instagram.com/mensageirasdorei_sibnf" target="_blank" rel="noopener" class="soc-link">
-            <i data-lucide="instagram" class="text-pink-500 w-7 h-7 flex-shrink-0"></i>
-            <span class="soc-label">Mensageiras do Rei <span>@mensageirasdorei_sibnf</span></span>
-          </a>
-        </div>
-      </div>
-
-      <!-- Outras redes -->
+    <section id="pastor" class="bg-gray-50 p-8 rounded-3xl flex flex-col md:flex-row gap-8 items-center">
+      <img src="pastor.jpg" class="w-40 h-52 rounded-2xl object-cover shadow-lg" alt="Pastor" />
       <div>
-        <p class="soc-group-head">Outras Redes</p>
-        <div class="grid sm:grid-cols-3 gap-3">
-          <a href="https://youtube.com/@sibnftv" target="_blank" rel="noopener" class="soc-link">
-            <i data-lucide="youtube" class="text-red-600 w-7 h-7 flex-shrink-0"></i>
-            <span class="soc-label">YouTube <span>Cultos ao vivo &middot; @sibnftv</span></span>
-          </a>
-          <a href="https://facebook.com/sibnf" target="_blank" rel="noopener" class="soc-link">
-            <i data-lucide="facebook" class="text-blue-700 w-7 h-7 flex-shrink-0"></i>
-            <span class="soc-label">Facebook <span>facebook.com/sibnf</span></span>
-          </a>
-          <a href="https://wa.me/5522981633108" target="_blank" rel="noopener" class="soc-link">
-            <i data-lucide="message-circle" class="text-green-500 w-7 h-7 flex-shrink-0"></i>
-            <span class="soc-label">WhatsApp Secretaria <span>(22) 98163-3108</span></span>
-          </a>
+        <h3 class="text-2xl font-bold">Pr. Nilson Gomes Godoy</h3>
+        <p class="text-gray-600 mt-2">Dedicado ao ensino da Palavra e ao cuidado das famílias da nossa comunidade.</p>
+      </div>
+    </section>
+
+    <section id="agenda">
+      <h2 class="section-title">Agenda Semanal</h2>
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="p-5 border-2 border-gray-100 rounded-xl bg-[#fdfcf0]">
+          <p class="gold font-black mb-2">DOMINGO</p>
+          <p class="text-sm">09h - EBD<br>10h - Culto<br>19h - Culto</p>
+        </div>
+        <div class="p-5 border-2 border-gray-100 rounded-xl bg-[#fdfcf0]">
+          <p class="gold font-black mb-2">QUARTA</p>
+          <p class="text-sm">19h - Reunião de Oração</p>
+        </div>
+        <div class="p-5 border-2 border-gray-100 rounded-xl bg-[#fdfcf0]">
+          <p class="gold font-black mb-2">SEXTA</p>
+          <p class="text-sm">19h - ER e MR</p>
         </div>
       </div>
     </section>
 
-    <!-- ── ANIVERSARIANTES ── -->
-    <section id="aniversariantes" class="reveal pb-4">
-      <h2 class="section-title">&#127874; Aniversariantes</h2>
-      <div class="calendar-wrap shadow-xl">
-        <iframe
-          src="https://calendar.google.com/calendar/embed?src=d524be653ddda530e5102dc37500585d123c519f01195a52f1ad5794163dd2a2%40group.calendar.google.com&amp;ctz=America%2FSao_Paulo&amp;hl=pt_BR&amp;mode=AGENDA&amp;showNav=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0"
-          title="Anivers&aacute;riantes"
-          scrolling="no"></iframe>
+    <section id="ofertas" class="text-center border-4 border-dotted border-navy p-10 rounded-3xl">
+      <p class="gold font-black text-sm mb-2 uppercase">Dízimos e Ofertas (PIX)</p>
+      <p class="text-2xl font-black text-navy">28.601.953/0001-24</p>
+      <p class="text-xs text-gray-400 mt-2 uppercase">Segunda Igreja Batista • Itaú</p>
+    </section>
+
+    <section id="social">
+      <h2 class="section-title">Redes Sociais</h2>
+      <div class="grid gap-3">
+        <a href="https://instagram.com/sibnovafriburgo" target="_blank" class="soc-link">
+          <i data-lucide="instagram" class="text-pink-500"></i> Igreja Geral (@sibnovafriburgo)
+        </a>
+        <a href="https://www.instagram.com/juventude_holy/" target="_blank" class="soc-link">
+          <i data-lucide="instagram" class="text-pink-500"></i> Juventude Holy (@juventude_holy)
+        </a>
+        <a href="https://instagram.com/embaixada_pr.joaojoses.filho" target="_blank" class="soc-link">
+          <i data-lucide="instagram" class="text-pink-500"></i> Embaixadores do Rei
+        </a>
+        <a href="https://youtube.com/@sibnftv" target="_blank" class="soc-link">
+          <i data-lucide="youtube" class="text-red-600"></i> YouTube (@sibnftv)
+        </a>
       </div>
     </section>
 
-  </div><!-- /px-6 -->
+    <section id="aniversariantes">
+      <h2 class="section-title">🎂 Aniversariantes</h2>
+      <div class="w-full h-[500px] border-2 border-navy rounded-2xl overflow-hidden shadow-xl">
+        <iframe src="https://calendar.google.com/calendar/embed?src=d524be653ddda530e5102dc37500585d123c519f01195a52f1ad5794163dd2a2%40group.calendar.google.com&ctz=America%2FSao_Paulo&hl=pt_BR&mode=AGENDA&showNav=0&showPrint=0&showTabs=0&showCalendars=0" class="w-full h-full" frameborder="0" scrolling="no"></iframe>
+      </div>
+    </section>
 
-  <!-- FOOTER -->
-  <footer class="bg-navy text-white border-t-4 border-gold">
+  </div>
 
-    <!-- Mapa -->
-    <div class="w-full h-56 md:h-72">
-      <iframe
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3686.847!2d-42.5313!3d-22.2822!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x97484b1e1f1f1f1f%3A0x1!2sRua+Pres.+Vargas%2C+60+-+Olaria%2C+Nova+Friburgo+-+RJ!5e0!3m2!1spt-BR!2sbr!4v1"
-        width="100%" height="100%" style="border:0; display:block; filter:grayscale(20%) contrast(1.05);"
-        allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-        title="Localiza&ccedil;&atilde;o da SIBNF"></iframe>
-    </div>
-
-    <!-- Info -->
-    <div class="py-10 px-6 text-center">
-      <h3 class="text-xl font-bold mb-1">Segunda Igreja Batista de Nova Friburgo</h3>
-      <p class="text-sm text-white/60 mt-1">Rua Pres. Vargas, 60 &mdash; Olaria, Nova Friburgo &mdash; RJ</p>
-      <p class="mt-1 text-sm text-white/60">
-        <a href="https://wa.me/5522981633108" class="hover:text-gold transition">(22) 98163-3108</a>
-      </p>
-      <a href="https://maps.google.com/?q=Rua+Presidente+Vargas+60+Olaria+Nova+Friburgo+RJ"
-         target="_blank" rel="noopener"
-         class="inline-flex items-center gap-2 mt-4 text-xs font-black uppercase tracking-widest text-gold border border-gold/40 px-4 py-2 rounded-full hover:bg-gold hover:text-navy transition">
-        <i data-lucide="map-pin" class="w-3 h-3"></i> Como chegar
-      </a>
-      <p class="text-xs text-white/30 uppercase tracking-widest mt-8">Desde 1947 &bull; SIBNF</p>
-    </div>
+  <footer class="bg-navy text-white p-12 text-center border-t-8 border-gold">
+    <p class="text-lg font-bold">Segunda Igreja Batista de Nova Friburgo</p>
+    <p class="text-sm opacity-50 mt-2">Rua Pres. Vargas, 60 — Olaria — sibnf.org</p>
   </footer>
+</main>
 
-</main><!-- /main -->
+<a href="https://wa.me/5522981633108" target="_blank" class="fixed bottom-6 right-6 bg-[#25d366] text-white p-4 rounded-full shadow-2xl flex items-center gap-2 z-[100]">
+  <i data-lucide="message-circle"></i> <span class="font-bold text-sm">Pedido de Oração</span>
+</a>
 
 <script>
-  // ── VERSÍCULOS ROTATIVOS ──────────────────────────
-  var versos = [
-    { texto: '\u201cL\u00e2mpada para os meus p\u00e9s \u00e9 a tua palavra e luz para o meu caminho.\u201d', ref: 'Salmos 119:105' },
-    { texto: '\u201cPorque Deus amou o mundo de tal maneira que deu o seu Filho unig\u00eanito, para que todo aquele que nele cr\u00ea n\u00e3o perea, mas tenha a vida eterna.\u201d', ref: 'Jo\u00e3o 3:16' },
-    { texto: '\u201cConfia no Senhor de todo o teu cora\u00e7\u00e3o e n\u00e3o te estribes no teu pr\u00f3prio entendimento.\u201d', ref: 'Prov\u00e9rbios 3:5' },
-    { texto: '\u201cO Senhor \u00e9 o meu pastor e nada me faltar\u00e1.\u201d', ref: 'Salmos 23:1' },
-    { texto: '\u201cTudo posso naquele que me fortalece.\u201d', ref: 'Filipenses 4:13' },
-    { texto: '\u201cVinde a mim, todos os que estais cansados e oprimidos, e eu vos aliviarei.\u201d', ref: 'Mateus 11:28' },
-    { texto: '\u201cSede fortes e corajosos. N\u00e3o temais nem vos assusteis... pois o Senhor, o teu Deus, vai contigo.\u201d', ref: 'Deuteron\u00f4mio 31:6' },
-    { texto: '\u201cAmai-vos uns aos outros como eu vos amei.\u201d', ref: 'Jo\u00e3o 15:12' },
-    { texto: '\u201cBuscai primeiro o Reino de Deus e a sua justi\u00e7a, e todas essas coisas vos ser\u00e3o acrescentadas.\u201d', ref: 'Mateus 6:33' },
-    { texto: '\u201cN\u00e3o vos inquieteis com coisa alguma; antes, as vossas peti\u00e7\u00f5es sejam conhecidas diante de Deus pela ora\u00e7\u00e3o e s\u00faplica, com a\u00e7\u00e3o de gra\u00e7as.\u201d', ref: 'Filipenses 4:6' }
-  ];
-
-  // Escolhe versículo baseado na semana do ano (troca semanalmente)
-  var semana = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 1)) / 604800000);
-  var versoAtual = semana % versos.length;
-
-  function renderVerse() {
-    var v = versos[versoAtual];
-    var tEl = document.getElementById('verse-text');
-    var rEl = document.getElementById('verse-ref');
-    // fade out
-    tEl.style.transition = 'opacity 0.35s';
-    rEl.style.transition = 'opacity 0.35s';
-    tEl.style.opacity = '0';
-    rEl.style.opacity = '0';
-    setTimeout(function() {
-      tEl.textContent = v.texto;
-      rEl.textContent = v.ref;
-      tEl.style.opacity = '1';
-      rEl.style.opacity = '1';
-    }, 350);
-    // dots
-    var dots = document.getElementById('verse-dots');
-    dots.innerHTML = '';
-    versos.forEach(function(_, i) {
-      var d = document.createElement('span');
-      d.style.cssText = 'display:inline-block; width:6px; height:6px; border-radius:50%; background:' + (i === versoAtual ? '#c5a059' : 'rgba(255,255,255,0.25)') + '; transition:background 0.3s;';
-      dots.appendChild(d);
-    });
-  }
-
-  function changeVerse(dir) {
-    versoAtual = (versoAtual + dir + versos.length) % versos.length;
-    renderVerse();
-  }
-
-  renderVerse();
-
-  // ── CONTADOR DE FUNDAÇÃO ──────────────────────────
-  function updateContador() {
-    var fundacao = new Date(1947, 2, 27); // 27 mar 1947
-    var hoje = new Date();
-    var anos = hoje.getFullYear() - fundacao.getFullYear();
-    var m = hoje.getMonth() - fundacao.getMonth();
-    if (m < 0 || (m === 0 && hoje.getDate() < fundacao.getDate())) anos--;
-    var meses = ((hoje.getMonth() - fundacao.getMonth()) + 12) % 12;
-    if (hoje.getDate() < fundacao.getDate()) meses = (meses + 11) % 12;
-    var el = document.getElementById('contador');
-    if (el) el.textContent = anos + ' anos e ' + meses + ' meses servindo ao Senhor';
-  }
-  updateContador();
-
-  // ── RESTANTE ─────────────────────────────────────
-  // Scroll margin dinâmico baseado na altura real do cabeçalho
-  function updateScrollMargin() {
-    var h = document.querySelector('header').offsetHeight + 48;
-    document.querySelectorAll('section[id]').forEach(function(el) {
-      el.style.scrollMarginTop = h + 'px';
-    });
-  }
-  updateScrollMargin();
-  window.addEventListener('resize', updateScrollMargin);
-
-  lucide.createIcons();
-
-  // Copiar CNPJ
-  document.getElementById('copyBtn').addEventListener('click', function() {
-    var btn = this;
-    navigator.clipboard.writeText('28601953000124').then(function() {
-      btn.innerHTML = '&#10003; Copiado!';
-      setTimeout(function() { btn.innerHTML = '&#128203; Copiar CNPJ'; }, 2500);
-    });
-  });
-
-  // Scroll reveal
-  var obs = new IntersectionObserver(function(entries) {
-    entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('in'); });
-  }, { threshold: 0.07 });
-  document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
+  // Inicializa os ícones mesmo se o resto falhar
+  try {
+    lucide.createIcons();
+  } catch (e) { console.error("Erro nos ícones"); }
 </script>
-<!-- BOTÕES FLUTUANTES -->
-<a href="https://maps.google.com/?q=Rua+Presidente+Vargas+60+Olaria+Nova+Friburgo+RJ"
-   target="_blank" rel="noopener" class="wa-float" title="Como chegar"
-   style="bottom: 96px; background: #19395f; box-shadow: 0 4px 20px rgba(25,57,95,0.45);">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:26px;height:26px;flex-shrink:0;">
-    <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-  </svg>
-  <span class="wa-label">Como<br>Chegar</span>
-</a>
-
-<!-- BOTÃO FLUTUANTE WHATSAPP -->
-<a href="https://wa.me/5522981633108?text=Ol%C3%A1%2C+gostaria+de+fazer+um+pedido+de+ora%C3%A7%C3%A3o." target="_blank" rel="noopener" class="wa-float" title="Pedido de ora&ccedil;&atilde;o ou contato">
-  <svg viewBox="0 0 24 24" fill="currentColor">
-    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
-  </svg>
-  <span class="wa-label">Pedido de<br>Ora&ccedil;&atilde;o</span>
-</a>
 
 </body>
 </html>
