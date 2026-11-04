@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SIBNF: Agenda e Cantina</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700&family=Figtree:wght@400;600;700&display=swap">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light;
+--bg:#eff3f8;--card:#fff;--ink:#14202e;--mut:#566376;--line:#d3dbe6;--navy:#19395f;--on:#fff;--lk:#19395f;--amb:#e9a23b;--ok:#1d6f47;--okbg:#e3f2ea;--bad:#a8261c;--badbg:#fbe8e5;--fld:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0e1621;--card:#152130;--ink:#e7edf5;--mut:#9aa8ba;--line:#27374a;--navy:#1f4573;--lk:#8fbaf0;--amb:#f0b255;--ok:#74d2a2;--okbg:#12301f;--bad:#ff9d93;--badbg:#3a1a17;--fld:#0f1a27}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0e1621;--card:#152130;--ink:#e7edf5;--mut:#9aa8ba;--line:#27374a;--navy:#1f4573;--lk:#8fbaf0;--amb:#f0b255;--ok:#74d2a2;--okbg:#12301f;--bad:#ff9d93;--badbg:#3a1a17;--fld:#0f1a27}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Figtree,system-ui,-apple-system,"Segoe UI",sans-serif}
+h1,h2,h3,h4{font-family:Bitter,Georgia,serif;margin:0;line-height:1.25}
+:focus-visible{outline:3px solid var(--amb);outline-offset:2px}
+.w{max-width:760px;margin:0 auto}
+header{background:var(--navy);color:var(--on);padding:16px 16px 0}
+header p{margin:0;font-size:14px;opacity:.85}
+header h1{font-size:24px;margin:2px 0 12px}
+nav{display:flex;gap:6px}
+nav a{flex:1;text-align:center;padding:10px 8px;color:inherit;text-decoration:none;font-weight:600;border-radius:8px 8px 0 0;opacity:.78}
+nav a.on{background:var(--bg);color:var(--ink);opacity:1}
+main{padding:16px}
+.sec{background:var(--card);border-top:3px solid var(--navy);border-radius:0 0 6px 6px;padding:14px 16px;margin:0 0 16px}
+.sec h2{font-size:18px}
+.hint{margin:4px 0 12px;color:var(--mut);font-size:14px}
+label{display:block;margin:0 0 10px;font-size:14px;font-weight:600;color:var(--mut)}
+input,select,textarea{display:block;width:100%;margin-top:4px;padding:10px;font:inherit;font-weight:400;color:var(--ink);background:var(--fld);border:1px solid var(--line);border-radius:6px}
+.g3{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:0 10px}
+button{font:inherit;font-weight:600;padding:10px 14px;border:0;border-radius:6px;background:var(--navy);color:var(--on);cursor:pointer}
+button:disabled{opacity:.6;cursor:default}
+button.ghost{background:transparent;color:var(--lk);border:1px solid var(--line)}
+button.danger{color:var(--bad)}
+.acoes{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.aviso{margin:8px 0;padding:10px 12px;font-size:14px;border-radius:6px;background:var(--bg);border:1px solid var(--line)}
+.aviso ul{margin:4px 0 0;padding-left:18px}
+.aviso.ok{background:var(--okbg);color:var(--ok);border-color:transparent}
+.aviso.bad{background:var(--badbg);color:var(--bad);border-color:transparent}
+#acesso{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;background:var(--card)}
+#acesso button{padding:6px 12px}
+.est{margin:0 0 12px;font-size:14px;color:var(--mut)}
+.vazio{margin:0;padding:18px 16px;text-align:center;color:var(--mut)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 6px}
+.chip{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:99px;padding:6px 16px}
+.chip.on{background:var(--navy);color:var(--on);border-color:var(--navy)}
+.mes{margin:18px 0 2px;font-size:16px;color:var(--lk)}
+.ev{display:grid;grid-template-columns:48px 1fr;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.ev.past{opacity:.55}
+.dia{text-align:center;align-self:start;padding:6px 0;background:var(--bg);border-radius:6px}
+.dia b{display:block;font:700 22px/1.1 Bitter,Georgia,serif}
+.dia span{font-size:13px;color:var(--mut)}
+.corpo{min-width:0}
+.corpo h4{font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:2px 12px;margin:2px 0;font-size:14px;color:var(--mut)}
+.meta strong{color:var(--ink)}
+.nota{margin:4px 0;font-size:14px}
+.tag{display:inline-block;margin:2px 0;padding:1px 10px;font-size:13px;font-weight:600;color:var(--lk);border:1px solid var(--line);border-radius:99px}
+/* rol vertical */
+.rolbox{background:var(--navy);color:var(--on);border:0;border-radius:6px;padding:14px 0 6px}
+.rolbox h2{display:flex;align-items:center;gap:8px;padding:0 16px 8px;font-size:17px}
+.rolbox h2::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--amb)}
+.rolbox .vazio{color:var(--on);opacity:.85}
+.rol{height:168px;overflow:hidden;-webkit-mask-image:linear-gradient(transparent,#000 16%,#000 84%,transparent);mask-image:linear-gradient(transparent,#000 16%,#000 84%,transparent)}
+.rol.fixo{height:auto;-webkit-mask-image:none;mask-image:none}
+.trilho{animation:rolar var(--dur,20s) linear infinite;will-change:transform}
+.rol.fixo .trilho{animation:none}
+.rol:hover .trilho,.rol:focus-within .trilho,.rol:active .trilho{animation-play-state:paused}
+@keyframes rolar{to{transform:translateY(-50%)}}
+.it{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:center;width:100%;height:56px;padding:0 16px;background:none;border:0;border-radius:0;color:inherit;text-align:left;font-weight:400}
+.it:hover{background:#ffffff14}
+.dd{font:700 20px/1 Bitter,Georgia,serif;color:var(--amb);text-align:center}
+.dd small{display:block;margin-top:2px;font:600 11px Figtree,sans-serif;color:var(--on);opacity:.8}
+.tx{min-width:0}
+.tx b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sub{display:flex;gap:10px;font-size:13px;opacity:.88;white-space:nowrap;overflow:hidden}
+.alerta{color:var(--amb);font-weight:700}
+@media (prefers-reduced-motion:reduce){.trilho{animation:none}.rol{overflow-y:auto;-webkit-mask-image:none;mask-image:none}.copia{display:none}}
+/* cantina */
+.wk{padding:12px 0;border-top:1px solid var(--line)}
+.wk .d{font-size:14px;font-weight:600;color:var(--mut)}
+.wk h4{margin:2px 0;font-size:18px}
+.wk label{margin:8px 0 0}
+.eq{display:grid;grid-template-columns:1fr 1.6fr auto;gap:8px;margin:0 0 8px;align-items:start}
+.eq input{margin-top:0}
+details summary{cursor:pointer;font-weight:700}
+@media (max-width:520px){.g3{grid-template-columns:1fr 1fr}.g3 label:first-child{grid-column:1/-1}.eq{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="w">
+<p>Segunda Igreja Batista de Nova Friburgo</p>
+<h1>Agenda e Cantina</h1>
+<nav><a id="t-agenda" href="#agenda">Agenda do ano</a><a id="t-cantina" href="#cantina">Cantina</a></nav>
+</div></header>
+<main class="w">
+<p id="est" class="est" role="status" hidden></p>
+<p id="msg" class="est" role="status"></p>
+<div id="acesso" class="aviso" hidden><span id="acesso-tx"></span><button id="acesso-btn" type="button" class="ghost"></button></div>
+
+<form id="login" class="sec" hidden>
+<h2>Entrar como colaborador</h2>
+<p class="hint">Digite o código de acesso da equipe. Ele fica guardado só neste aparelho até você sair.</p>
+<label>Código de acesso<input id="f-code" type="password" autocomplete="current-password" required></label>
+<div class="acoes"><button id="entrar">Entrar</button><button id="login-cancel" type="button" class="ghost">Cancelar</button></div>
+</form>
+
+<section id="v-agenda">
+<div class="sec rolbox"><h2>Próximos eventos</h2><div id="rol" class="rol fixo"><p class="vazio">Carregando eventos…</p></div></div>
+
+<form id="novo" class="sec" hidden>
+<h2 id="ftit">Novo evento</h2>
+<p class="hint">Cada evento em 4 linhas: o quê, quando, onde e o que levar ou com quem falar.</p>
+<label>O quê<input id="f-title" required maxlength="80" placeholder="Ex.: Retiro de jovens"></label>
+<label>Ministério<select id="f-min"></select></label>
+<div class="g3">
+<label>Data<input id="f-date" type="date" required></label>
+<label>Início<input id="f-start" type="time" required></label>
+<label>Término<input id="f-end" type="time" required></label>
+</div>
+<div id="aviso" class="aviso" aria-live="polite" hidden></div>
+<label>Onde<input id="f-place" maxlength="80" placeholder="Ex.: Salão social"></label>
+<label>Responsável<input id="f-resp" maxlength="60"></label>
+<label>O que levar ou com quem falar<textarea id="f-notes" rows="2" maxlength="200"></textarea></label>
+<div class="acoes"><button id="salvar">Salvar evento</button><button id="cancelar" type="button" class="ghost" hidden>Cancelar edição</button></div>
+</form>
+
+<div class="sec"><h2>Eventos do ano</h2><div id="anos" class="chips"></div><div id="lista"></div></div>
+<details class="sec"><summary>Horários fixos da igreja (entram nos conflitos)</summary><ul id="fixos"></ul><p class="hint">Durações aproximadas.</p></details>
+</section>
+
+<section id="v-cantina" hidden>
+<div class="sec"><h2>Revezamento da cantina</h2><p class="hint">Uma equipe por fim de semana, em rodízio.</p><div id="semanas"></div></div>
+<details id="eqbox" class="sec" hidden><summary>Equipes e rodízio</summary><div id="equipes"></div></details>
+</section>
+</main>
+<script>
+/* >>> Depois de implantar o Apps Script, cole aqui a URL que termina em /exec <<< */
+const API_URL='https://script.google.com/macros/s/AKfycbzcrSgM5nA1aMOS08fe2enDDb-WrkyC08keqzdvhjZNSTgllMMz8Shyra7Ha22F2cx2oA/exec';
+
+const $=s=>document.querySelector(s);
+const h=(t,a,...k)=>{const e=document.createElement(t);for(const x in a||{}){const v=a[x];if(x==='class')e.className=v;else if(x.slice(0,2)==='on')e.addEventListener(x.slice(2),v);else if(v!==false&&v!=null)e.setAttribute(x,v)}for(const c of k.flat())if(c)e.append(c.nodeType?c:document.createTextNode(c));return e};
+const MES=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+const DS=['dom','seg','ter','qua','qui','sex','sáb'];
+const MINS=['Ação Social','Administração','Adoração','Comunhão','Comunicação','Educação Cristã','Evangelismo','Família','Missões','Oração','Juventude Holy','Embaixadores do Rei','Mensageiras do Rei','Igreja toda'];
+const FIXOS=[
+{d:0,s:'09:00',e:'10:00',t:'Escola Bíblica Dominical'},
+{d:0,s:'10:00',e:'12:00',t:'Culto da Manhã'},
+{d:0,s:'19:00',e:'21:00',t:'Culto de Adoração e Pregação'},
+{d:3,s:'19:00',e:'21:00',t:'Oração e Estudo Bíblico'},
+{d:5,s:'19:00',e:'21:00',t:'Embaixadores e Mensageiras do Rei'}];
+const NDIA={0:'Domingo',3:'Quarta-feira',5:'Sexta-feira'};
+const cap=s=>s[0].toUpperCase()+s.slice(1);
+const pd=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const mins=t=>{const[a,b]=t.split(':').map(Number);return a*60+b};
+let hoje=iso(new Date());
+const ord=(a,b)=>(a.date+a.start).localeCompare(b.date+b.start);
+const valido=x=>x&&typeof x.title==='string'&&/^\d{4}-\d\d-\d\d$/.test(x.date)&&/^\d\d:\d\d$/.test(x.start)&&/^\d\d:\d\d$/.test(x.end);
+const S={events:[],cfg:{teams:[],anchor:''},ov:{},draft:{teams:[],anchor:''},dirty:0,can:false,ok:false,ano:String(new Date().getFullYear())};
+const LS={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}},del(k){try{localStorage.removeItem(k)}catch{}}};
+const API_OK=/^https:\/\/script\.google\.com\/.+\/exec$/.test(API_URL);
+let CODE=LS.get('sibnf-code')||'',editing=null,sigRol='',sigDados='';
+
+function msg(t){const m=$('#msg');m.textContent=t;clearTimeout(msg.t);msg.t=setTimeout(()=>{m.textContent=''},7000)}
+function estado(t){const e=$('#est');e.textContent=t;e.hidden=!t}
+
+/* comunicação com a planilha (Apps Script) */
+async function api(payload){
+ const r=await fetch(API_URL,{method:'POST',body:JSON.stringify(payload)});
+ if(!r.ok)throw new Error('http');
+ return r.json()}
+async function escrever(acao,extra){
+ let r;
+ try{r=await api({action:acao,code:CODE,...extra})}
+ catch{msg('Sem conexão com a planilha. Tente de novo.');return null}
+ if(r&&r.ok)return r;
+ if(r&&r.erro==='codigo'){sair();msg('O código não confere. Entre de novo como colaborador.')}
+ else msg((r&&r.msg)||'Não foi possível salvar. Tente de novo.');
+ return null}
+function aplicar(d){
+ S.events=(d.events||[]).filter(valido);S.ov=d.ov||{};
+ const c=d.cfg||{};
+ S.cfg={teams:(c.teams||[]).map(x=>({name:String(x.name||''),members:String(x.members||'')})),anchor:c.anchor||''};
+ if(!S.dirty){S.draft={teams:S.cfg.teams.map(x=>({...x})),anchor:S.cfg.anchor};renderEquipes()}
+ S.ok=true;render()}
+async function carregar(forcar){
+ if(!API_OK)return;
+ try{
+  const r=await fetch(API_URL+'?t='+Date.now());
+  if(!r.ok)throw new Error('http');
+  const txt=await r.text();
+  const j=JSON.parse(txt);
+  if(!j.ok)throw new Error(j.msg||'erro');
+  estado('');
+  if(forcar||txt!==sigDados){sigDados=txt;aplicar(j.dados);LS.set('sibnf-dados',txt)}
+  verificar()
+ }catch{estado(S.ok?'Sem conexão no momento. O que aparece pode estar desatualizado.':'Não foi possível carregar os dados. Tente de novo em instantes.')}}
+
+/* entrada de colaborador */
+function modo(){
+ $('#novo').hidden=!S.can;$('#eqbox').hidden=!S.can;
+ $('#acesso').hidden=!API_OK;
+ $('#acesso-tx').textContent=S.can?'Modo colaborador ativo.':'Modo leitura. Só colaboradores cadastram eventos e equipes.';
+ $('#acesso-btn').textContent=S.can?'Sair':'Entrar como colaborador'}
+function sair(){CODE='';LS.del('sibnf-code');S.can=false;limpar();modo();render()}
+async function verificar(){
+ if(!CODE||S.can||!API_OK)return;
+ try{
+  const r=await api({action:'login',code:CODE});
+  if(r.ok){S.can=true;modo();renderEquipes();render()}
+  else if(r.erro==='codigo'){CODE='';LS.del('sibnf-code')}
+ }catch{}}
+async function entrar(ev){
+ ev.preventDefault();
+ const c=F('code').value,b=$('#entrar');
+ if(!c)return;
+ b.disabled=true;
+ let r=null;
+ try{r=await api({action:'login',code:c})}catch{msg('Sem conexão com a planilha. Tente de novo.')}
+ b.disabled=false;
+ if(!r)return;
+ if(!r.ok)return msg(r.msg||'Código incorreto.');
+ CODE=c;LS.set('sibnf-code',c);S.can=true;F('code').value='';$('#login').hidden=true;
+ modo();renderEquipes();render();msg('Você entrou como colaborador.')}
+
+/* conflitos de horário */
+const ov=(a,b)=>mins(a.s)<mins(b.e)&&mins(b.s)<mins(a.e);
+function conflitos(v){
+ if(!v.date||!v.start||!v.end||mins(v.end)<=mins(v.start))return[];
+ const a={s:v.start,e:v.end},dow=pd(v.date).getDay(),r=[];
+ for(const f of FIXOS)if(f.d===dow&&ov(a,f))r.push({t:f.t,s:f.s,e:f.e,fixo:1});
+ for(const o of S.events)if(o.id!==v.id&&o.date===v.date&&ov(a,{s:o.start,e:o.end}))r.push({t:o.title,s:o.start,e:o.end,min:o.ministry||'',same:!!v.place&&v.place.trim().toLowerCase()===String(o.place||'').trim().toLowerCase()});
+ return r}
+const fmtC=c=>c.t+', '+c.s+' às '+c.e+(c.fixo?' (horário fixo da igreja)':'')+(c.min?', '+c.min:'')+(c.same?', mesmo local':'');
+const listaC=c=>[h('b',{},'⚠ Conflito de horário neste dia:'),h('ul',{},c.map(x=>h('li',{},fmtC(x))))];
+
+/* formulário */
+const F=id=>$('#f-'+id);
+const lerForm=()=>({id:editing&&editing.id,title:F('title').value,min:F('min').value,date:F('date').value,start:F('start').value,end:F('end').value,place:F('place').value,resp:F('resp').value,notes:F('notes').value});
+function checar(){
+ const v=lerForm(),b=$('#aviso'),s=$('#salvar');
+ s.textContent=editing?'Salvar alterações':'Salvar evento';
+ if(!v.date||!v.start||!v.end){b.hidden=true;return}
+ b.hidden=false;b.replaceChildren();
+ if(mins(v.end)<=mins(v.start)){b.className='aviso bad';b.append('O término precisa ser depois do início.');return}
+ const c=conflitos(v);
+ if(!c.length){b.className='aviso ok';b.append('Sem conflito de horário neste dia.');return}
+ b.className='aviso bad';b.append(...listaC(c));s.textContent='Salvar mesmo com conflito'}
+function limpar(){editing=null;$('#novo').reset();$('#ftit').textContent='Novo evento';$('#cancelar').hidden=true;checar()}
+function editar(e){editing=e;F('title').value=e.title;F('min').value=e.ministry||'';F('date').value=e.date;F('start').value=e.start;F('end').value=e.end;F('place').value=e.place||'';F('resp').value=e.resp||'';F('notes').value=e.notes||'';$('#ftit').textContent='Editar evento';$('#cancelar').hidden=false;checar();$('#novo').scrollIntoView({behavior:'smooth'})}
+async function salvar(ev){
+ ev.preventDefault();
+ const v=lerForm();
+ if(!API_OK)return msg('A página ainda não está conectada à planilha.');
+ if(!v.title.trim()||!v.date||!v.start||!v.end)return msg('Preencha o evento, a data, o início e o término.');
+ if(mins(v.end)<=mins(v.start))return msg('O término precisa ser depois do início.');
+ const c=conflitos(v),btn=$('#salvar');
+ btn.disabled=true;
+ const r=await escrever('salvarEvento',{evento:{id:editing&&editing.id,title:v.title.trim(),ministry:v.min,date:v.date,start:v.start,end:v.end,place:v.place.trim(),resp:v.resp.trim(),notes:v.notes.trim()}});
+ btn.disabled=false;
+ if(!r)return;
+ limpar();await carregar(true);
+ msg(c.length?'Evento salvo com conflito de horário. O aviso fica na lista.':'Evento salvo.')}
+function exc(e){const b=h('button',{type:'button',class:'ghost danger'},'Excluir');let n=0;b.onclick=async()=>{if(!n){n=1;b.textContent='Confirmar exclusão';setTimeout(()=>{n=0;b.textContent='Excluir'},4000);return}b.disabled=true;const r=await escrever('excluirEvento',{id:e.id});b.disabled=false;if(r)await carregar(true)};return b}
+
+/* rol vertical de próximos eventos */
+const ir=e=>{S.ano=e.date.slice(0,4);render();setTimeout(()=>{const n=document.getElementById('ev-'+e.id);n&&n.scrollIntoView({behavior:'smooth',block:'center'})},60)};
+function renderRol(){
+ const it=S.events.filter(e=>e.date>=hoje).sort(ord).map(e=>({e,c:conflitos(e).length}));
+ const sig=S.ok+JSON.stringify(it.map(x=>[x.e.id,x.e.title,x.e.date,x.e.start,x.e.end,x.e.place||'',x.c]));
+ if(sig===sigRol)return;sigRol=sig;
+ const rol=$('#rol');rol.replaceChildren();
+ if(!it.length){rol.className='rol fixo';rol.append(h('p',{class:'vazio'},S.ok?'Nenhum evento marcado ainda.':'Carregando eventos…'));return}
+ const lin=(x,dup)=>{const e=x.e,d=pd(e.date);return h('button',{type:'button',class:'it',tabindex:dup?'-1':null,onclick:()=>ir(e)},
+  h('span',{class:'dd'},d.getDate(),h('small',{},MES[d.getMonth()].slice(0,3))),
+  h('span',{class:'tx'},h('b',{},e.title),h('span',{class:'sub'},h('span',{},DS[d.getDay()]+', '+e.start),e.place&&h('span',{},e.place),x.c>0&&h('span',{class:'alerta'},'conflito'))))};
+ const col=dup=>h('div',{class:dup?'copia':'','aria-hidden':dup?'true':null},it.map(x=>lin(x,dup)));
+ const fixo=it.length<=3;
+ rol.className='rol'+(fixo?' fixo':'');
+ rol.style.setProperty('--dur',Math.max(14,it.length*3.2)+'s');
+ rol.append(h('div',{class:'trilho'},col(0),fixo?null:col(1)))}
+
+/* agenda do ano */
+function renderAnos(){const y=new Date().getFullYear(),a=[...new Set([y,y+1,...S.events.map(e=>+e.date.slice(0,4))])].sort((p,q)=>p-q);$('#anos').replaceChildren(...a.map(n=>h('button',{type:'button',class:'chip'+(String(n)===S.ano?' on':''),onclick:()=>{S.ano=String(n);render()}},String(n))))}
+function renderAgenda(){
+ const box=$('#lista');box.replaceChildren();
+ if(!S.ok){box.append(h('p',{class:'vazio'},'Carregando eventos…'));return}
+ const L=S.events.filter(e=>e.date.slice(0,4)===S.ano).sort(ord);
+ if(!L.length){box.append(h('p',{class:'vazio'},'Nenhum evento em '+S.ano+' ainda.'+(S.can?' Cadastre o primeiro no formulário acima.':'')));return}
+ let mes=-1;
+ for(const e of L){
+  const d=pd(e.date),c=conflitos(e);
+  if(d.getMonth()!==mes){mes=d.getMonth();box.append(h('h3',{class:'mes'},cap(MES[mes])+' de '+S.ano))}
+  box.append(h('article',{class:'ev'+(e.date<hoje?' past':''),id:'ev-'+e.id},
+   h('div',{class:'dia'},h('b',{},d.getDate()),h('span',{},DS[d.getDay()])),
+   h('div',{class:'corpo'},
+    h('h4',{},e.title),
+    h('p',{class:'meta'},h('strong',{},e.start+' às '+e.end),e.place&&h('span',{},e.place)),
+    e.ministry&&h('span',{class:'tag'},e.ministry),
+    e.resp&&h('p',{class:'meta'},'Responsável: '+e.resp),
+    e.notes&&h('p',{class:'nota'},e.notes),
+    c.length>0&&h('div',{class:'aviso bad'},listaC(c)),
+    S.can&&h('div',{class:'acoes'},h('button',{type:'button',class:'ghost',onclick:()=>editar(e)},'Editar'),exc(e)))))}}
+
+/* cantina */
+function domingos(n){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+(7-d.getDay())%7);return Array.from({length:n},(_,i)=>{const x=new Date(d);x.setDate(d.getDate()+7*i);return iso(x)})}
+const sem=(a,b)=>Math.round((pd(b)-pd(a))/6048e5);
+function equipeDe(dom){
+ const T=S.cfg.teams,o=S.ov[dom];
+ if(o){const t=T.find(x=>x.name===o.team);if(t)return{t,manual:true}}
+ const w=sem(S.cfg.anchor||dom,dom);return{t:T[((w%T.length)+T.length)%T.length]}}
+function renderCantina(){
+ const box=$('#semanas');box.replaceChildren();
+ const T=S.cfg.teams;
+ if(!T.length){box.append(h('p',{class:'vazio'},S.can?'Cadastre as equipes em “Equipes e rodízio” para gerar a escala.':'A escala da cantina ainda não foi cadastrada.'));return}
+ const prox=domingos(1)[0];
+ for(const dom of domingos(10)){
+  const D=pd(dom),sb=pd(dom);sb.setDate(sb.getDate()-1);
+  const r=equipeDe(dom),evs=S.events.filter(e=>e.date===dom||e.date===iso(sb)).sort(ord);
+  const rot=sb.getMonth()===D.getMonth()?'Sábado '+sb.getDate()+' e domingo '+D.getDate()+' de '+MES[D.getMonth()]:'Sábado '+sb.getDate()+' de '+MES[sb.getMonth()]+' e domingo '+D.getDate()+' de '+MES[D.getMonth()];
+  const sel=h('select',{onchange:async x=>{const v=x.target.value;sel.disabled=true;const res=await escrever('definirTroca',{data:dom,equipe:v});sel.disabled=false;if(res)await carregar(true);else sel.value=S.ov[dom]?S.ov[dom].team:''}},h('option',{value:''},'Automática (rodízio)'),T.map(t=>h('option',{value:t.name},t.name)));
+  sel.value=S.ov[dom]?S.ov[dom].team:'';
+  box.append(h('div',{class:'wk'},
+   h('div',{class:'d'},rot+(dom===prox?', este fim de semana':'')),
+   h('h4',{},r.t.name+(r.manual?' (trocada)':'')),
+   r.t.members&&h('p',{class:'meta'},r.t.members),
+   evs.length>0&&h('p',{class:'meta'},'Eventos no fim de semana: '+evs.map(e=>e.title+' às '+e.start).join(', ')),
+   S.can&&h('label',{},'Equipe deste fim de semana',sel)))}}
+function renderEquipes(){
+ const box=$('#equipes');box.replaceChildren();
+ if(!S.can)return;
+ const d=S.draft;
+ box.append(h('label',{},'Domingo em que a 1ª equipe serve',h('input',{type:'date',value:d.anchor||'',oninput:e=>{d.anchor=e.target.value;S.dirty=1}})));
+ d.teams.forEach((t,i)=>box.append(h('div',{class:'eq'},
+  h('input',{placeholder:'Nome da equipe',value:t.name,maxlength:'40',oninput:e=>{t.name=e.target.value;S.dirty=1}}),
+  h('input',{placeholder:'Integrantes, separados por vírgula',value:t.members,maxlength:'200',oninput:e=>{t.members=e.target.value;S.dirty=1}}),
+  h('button',{type:'button',class:'ghost danger',onclick:()=>{d.teams.splice(i,1);S.dirty=1;renderEquipes()}},'Remover'))));
+ box.append(h('div',{class:'acoes'},
+  h('button',{type:'button',class:'ghost',onclick:()=>{d.teams.push({name:'',members:''});S.dirty=1;renderEquipes()}},'Adicionar equipe'),
+  h('button',{type:'button',onclick:salvarEquipes},'Salvar equipes')))}
+async function salvarEquipes(){
+ const d=S.draft,teams=d.teams.map(t=>({name:t.name.trim(),members:t.members.trim()})).filter(t=>t.name);
+ if(!teams.length)return msg('Informe pelo menos uma equipe com nome.');
+ const a=d.anchor?pd(d.anchor):pd(domingos(1)[0]);a.setDate(a.getDate()-a.getDay());
+ const r=await escrever('salvarEquipes',{equipes:teams,ancora:iso(a)});
+ if(!r)return;
+ S.dirty=0;await carregar(true);msg('Equipes salvas.')}
+
+function render(){hoje=iso(new Date());renderAnos();renderRol();renderAgenda();renderCantina();if(S.can&&!$('#novo').hidden)checar()}
+
+/* rotas: #agenda e #cantina */
+function rota(){const v=location.hash==='#cantina'?'cantina':'agenda';for(const n of['agenda','cantina']){$('#v-'+n).hidden=n!==v;$('#t-'+n).classList.toggle('on',n===v)}}
+addEventListener('hashchange',rota);rota();
+
+/* início */
+F('min').append(h('option',{value:''},'Escolha o ministério'),...MINS.map(m=>h('option',{value:m},m)));
+$('#fixos').append(...FIXOS.map(f=>h('li',{},NDIA[f.d]+', '+f.s+' às '+f.e+': '+f.t)));
+$('#novo').addEventListener('submit',salvar);
+$('#login').addEventListener('submit',entrar);
+$('#cancelar').onclick=limpar;
+$('#login-cancel').onclick=()=>{$('#login').hidden=true;F('code').value=''};
+$('#acesso-btn').onclick=()=>{if(S.can){sair();msg('Você saiu do modo colaborador.')}else{$('#login').hidden=false;F('code').focus()}};
+['date','start','end','place'].forEach(k=>F(k).addEventListener('input',checar));
+modo();
+if(!API_OK){
+ S.ok=true;
+ estado('A página ainda não está conectada à planilha. Cole a URL do Apps Script em API_URL no arquivo index.html.');
+ render();
+}else{
+ const guardado=LS.get('sibnf-dados');
+ if(guardado){try{const j=JSON.parse(guardado);if(j.ok)aplicar(j.dados)}catch{}}
+ render();
+ carregar();
+ setInterval(()=>{if(document.hidden)return;if(iso(new Date())!==hoje)render();carregar()},30000);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)carregar()});
+}
+</script>
+</body>
+</html>
