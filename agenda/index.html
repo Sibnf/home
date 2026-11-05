@@ -651,6 +651,10 @@ async function salvarC(ev){
  MODO='';CD=null;CF=novoCF();renderForm();
  await carregar(true);
  msg(r.aviso||'Cantina salva.')}
+async function novoCodigoC(e){
+ if(!confirm('Gerar um novo código para “'+nomeC(e)+'”?\n\nO código atual deixa de funcionar na hora.'))return;
+ const r=await escreverC('novoCodigoCantina',{id:e.id},CODE);
+ if(r&&r.ok){NOVO={codigo:r.codigo,grupo:e.resp};renderCantina();$('#cantina').scrollIntoView({behavior:'smooth',block:'start'})}}
 function editarC(e){
  const code=codigoDe(e);if(!code)return;
  CD={e,code};CF=cfDe(e);MODO='form';renderForm()}
@@ -668,6 +672,7 @@ function cartaoC(e,passada){
   h('div',{class:'acoes'},
    h('button',{type:'button',class:'ghost',onclick:()=>editarC(e)},'Editar'),
    h('button',{type:'button',class:'ghost',onclick:()=>{const v=prompt('Quanto foi arrecadado? (ex.: 350,50)',e.raised?e.raised.replace('.',','):'');if(v!==null)acaoC(e,'arrecadouCantina',{valor:v},()=>msg('Valor registrado.'))}},'Registrar valor arrecadado'),
+   adm()&&h('button',{type:'button',class:'ghost',onclick:()=>novoCodigoC(e)},'Gerar novo código'),
    h('button',{type:'button',class:'ghost danger',onclick:()=>{if(confirm('Apagar a cantina “'+nomeC(e)+'”?\n\nIsso não dá para desfazer.'))acaoC(e,'excluirCantina',{},()=>msg('Cantina apagada.'))}},'Apagar')))}
 function painelAdm(C){
  const faltam=domingos(8).filter(d=>{const sb=add(d,-1);return!C.some(e=>e.periods.some(p=>p.date===d||p.date===sb))});
