@@ -503,7 +503,7 @@ async function salvar(ev){
  if(!r){atual();return}
  limpar();await carregar(true);msg('Evento salvo.')}
 function exc(e){return h('button',{type:'button',class:'ghost danger',onclick:async ev=>{
- if(!confirm('Excluir o evento “'+e.title+'”?\n\nIsso apaga todos os dias dele e não dá para desfazer.'))return;
+ if(!confirm('Excluir o evento “'+e.title+'”?\n\nIsso apaga todos os dias dele e não dá para desfazer.'+(e.pub?'\n\nEle é público: a equipe de comunicação será avisada por e-mail para retirar a divulgação.':'')))return;
  const b=ev.currentTarget;b.disabled=true;
  const r=await escrever('excluirEvento',{id:e.id});
  b.disabled=false;

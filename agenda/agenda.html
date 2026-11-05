@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SIBNF: Próximos eventos</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700&family=Figtree:wght@400;600;700&display=swap">
+<style>
+:root{color-scheme:light dark;font-size:18px;--bg:#eff3f8;--card:#fff;--ink:#14202e;--mut:#4a586b;--line:#c3cedb;--navy:#19395f;--amb:#e9a23b;--ok:#1d6f47;--badbg:#fbe8e5;--bad:#a8261c}
+@media(prefers-color-scheme:dark){:root{--bg:#0e1621;--card:#152130;--ink:#e7edf5;--mut:#9aa8ba;--line:#33465d;--navy:#1f4573;--badbg:#3a1a17;--bad:#ff9d93}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:1rem/1.5 Figtree,system-ui,sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+h1,h2,h3{font-family:Bitter,Georgia,serif;margin:0;line-height:1.25}
+header{background:var(--navy);color:#fff;padding:1rem}
+header p{margin:0;font-size:.85rem;opacity:.9}
+header h1{font-size:1.5rem}
+.w{max-width:48rem;margin:0 auto}
+main{padding:1rem}
+h2{font-size:1.1rem;margin:1.2rem 0 .5rem;text-transform:capitalize}
+.c{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--navy);border-radius:6px;padding:.8rem 1rem;margin:0 0 .7rem}
+.c h3{font-size:1.1rem}
+.c p{margin:.25rem 0 0;color:var(--mut);font-size:.95rem}
+.c .d{color:var(--ink);font-weight:600}
+.b{display:inline-block;padding:.1rem .6rem;border-radius:99px;background:var(--navy);color:#fff;font-size:.82rem;font-weight:700;margin:0 0 .4rem}
+.b.u{background:var(--amb);color:#14202e}
+.b.a{background:var(--ok)}
+.vz{color:var(--mut);padding:2rem 0;text-align:center}
+.rm{background:var(--badbg);border-left-color:var(--bad)}
+.pst{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:.6rem .8rem;margin:.4rem 0;font-size:.92rem}
+.mk{display:flex;justify-content:space-between;gap:.5rem;align-items:center;flex-wrap:wrap;margin-top:.6rem;font-weight:600;font-size:.92rem}
+.mk.pas{opacity:.55}
+button{font:inherit;font-size:.9rem;font-weight:700;padding:.4rem .9rem;border-radius:6px;border:2px solid var(--navy);background:var(--navy);color:#fff;cursor:pointer}
+:focus-visible{outline:3px solid var(--amb);outline-offset:2px}
+</style>
+</head>
+<body>
+<header><div class="w"><p>Segunda Igreja Batista de Nova Friburgo</p><h1 id="tit">Próximos eventos</h1></div></header>
+<main class="w" id="app"><p class="vz">Carregando…</p></main>
+<script>
+const API='https://script.google.com/macros/s/AKfycbwySA5-gB3CmYBh__M3SG_57UywR88JlT_mH9y5A3fB8eRegrYPvzgZ_18UaMA3O_ST/exec?publico=1';
+const ASSINATURA='Segunda Igreja Batista de Nova Friburgo';
+const H=3600e3,D=24*H;
+let dados={events:[],removed:[]},ok=false;
+
+/* Tudo em horário de Brasília (UTC-3, sem horário de verão) */
+const t0=(d,h)=>new Date(d+'T'+h+':00-03:00').getTime();
+const win=p=>{const a=t0(p.date,p.start);let b=t0(p.date,p.end);if(b<=a)b+=D;return[a,b]};
+const diaBR=ms=>new Date(ms-3*H).toISOString().slice(0,10);
+const nDias=a=>Math.round((Date.parse(diaBR(a))-Date.parse(diaBR(Date.now())))/D);
+const prox=e=>e.periods.find(p=>win(p)[1]>Date.now());
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=(ms,o)=>new Date(ms).toLocaleString('pt-BR',Object.assign({timeZone:'America/Sao_Paulo'},o));
+const quando=p=>fmt(t0(p.date,'12:00'),{weekday:'long',day:'numeric',month:'long'})+', das '+p.start+' às '+p.end;
+const onde=p=>{const r=p.rooms.filter(x=>x!=='Fora da igreja').map(x=>x.split(' · ').pop());return p.rooms.includes('Fora da igreja')?'Fora da igreja':r.join(', ')};
+
+/* Rótulo da contagem regressiva */
+function rotulo(p){
+ const[a,b]=win(p),n=Date.now();
+ if(n>=b)return null;
+ if(n>=a)return['Acontecendo agora','a'];
+ const d=nDias(a);
+ if(a-n<=3*H)return['Começa em menos de 3 horas','u'];
+ if(d===0)return['É hoje','u'];
+ if(d===1)return['É amanhã','u'];
+ if(d===7)return['Falta 1 semana',''];
+ if(d<7)return['Faltam '+d+' dias',''];
+ if(d>=29&&d<=31)return['Falta 1 mês',''];
+ if(d<=31)return['Faltam '+d+' dias',''];
+ return null}
+
+/* Marcos de postagem: quando publicar e a frase de abertura */
+const MARCOS=[
+ {k:'1 mês',intro:'📅 Falta 1 mês para',q:a=>t0(diaBR(a-30*D),'09:00')},
+ {k:'1 semana',intro:'🗓️ Falta 1 semana para',q:a=>t0(diaBR(a-7*D),'09:00')},
+ {k:'Véspera',intro:'⏰ É amanhã:',q:a=>t0(diaBR(a-D),'18:00')},
+ {k:'3 horas',intro:'🔔 Daqui a 3 horas:',q:a=>a-3*H}];
+const texto=(m,e,p)=>m.intro+' '+e.title+'!\n'+quando(p)+'\nLocal: '+onde(p)+(e.desc?'\n\n'+e.desc:'')+'\n\n'+ASSINATURA;
+const retrat=r=>'⚠️ Aviso: o evento “'+r.title+'” foi cancelado e não vai mais acontecer'+(r.dates?' ('+r.dates+')':'')+'. Pedimos desculpas pelo transtorno.\n\n'+ASSINATURA;
+
+function viewAgenda(){
+ const it=dados.events.map(e=>({e,p:prox(e)})).filter(x=>x.p).sort((x,y)=>win(x.p)[0]-win(y.p)[0]);
+ if(!it.length)return'<p class="vz">Nenhum evento público marcado por enquanto.</p>';
+ let mes='',h='';
+ it.forEach(({e,p})=>{
+  const m=fmt(t0(p.date,'12:00'),{month:'long',year:'numeric'});
+  if(m!==mes){mes=m;h+='<h2>'+esc(m)+'</h2>'}
+  const r=rotulo(p),extra=e.periods.filter(q=>win(q)[1]>Date.now()).length-1;
+  h+='<div class="c">'+(r?'<span class="b '+r[1]+'">'+r[0]+'</span>':'')+'<h3>'+esc(e.title)+'</h3><p class="d">'+esc(quando(p))+'</p><p>'+esc(onde(p))+(e.ministry&&e.ministry!=='Igreja toda'?' · '+esc(e.ministry):'')+'</p>'+(extra>0?'<p>+ mais '+extra+(extra>1?' dias':' dia')+' neste evento</p>':'')+(e.desc?'<p>'+esc(e.desc)+'</p>':'')+'</div>'});
+ return h}
+
+function viewCom(){
+ let h='<p class="hint" style="color:var(--mut)">Textos prontos para copiar. Os horários de publicação são sugestões.</p>';
+ if(dados.removed.length){
+  h+='<h2>Eventos apagados: retratar</h2>';
+  dados.removed.slice().sort((a,b)=>b.when-a.when).forEach((r,i)=>{
+   h+='<div class="c rm"><h3>'+esc(r.title)+'</h3><p>Apagado em '+esc(fmt(r.when,{dateStyle:'short',timeStyle:'short'}))+'</p><div class="pst" id="r'+i+'">'+esc(retrat(r))+'</div><button data-c="r'+i+'">Copiar aviso</button></div>'})}
+ h+='<h2>Postagens por evento</h2>';
+ const it=dados.events.map(e=>({e,p:prox(e)})).filter(x=>x.p).sort((x,y)=>win(x.p)[0]-win(y.p)[0]);
+ if(!it.length)h+='<p class="vz">Sem eventos públicos pela frente.</p>';
+ it.forEach(({e,p},i)=>{
+  const a=win(p)[0];
+  h+='<div class="c"><h3>'+esc(e.title)+'</h3><p class="d">'+esc(quando(p))+'</p>';
+  MARCOS.forEach((m,j)=>{
+   const q=m.q(a),pas=q<Date.now(),id='p'+i+'_'+j,hoje=diaBR(q)===diaBR(Date.now());
+   h+='<div class="mk'+(pas&&!hoje?' pas':'')+'"><span>'+m.k+' · '+(hoje?'hoje às '+fmt(q,{timeStyle:'short'}):pas?'já passou':fmt(q,{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}))+'</span>'+(pas&&!hoje?'':'<button data-c="'+id+'">Copiar texto</button>')+'</div>'+(pas&&!hoje?'':'<div class="pst" id="'+id+'">'+esc(texto(m,e,p))+'</div>')});
+  h+='</div>'});
+ return h}
+
+function render(){
+ const com=location.hash==='#comunicacao';
+ document.getElementById('tit').textContent=com?'Comunicação: postagens':'Próximos eventos';
+ document.getElementById('app').innerHTML=ok?(com?viewCom():viewAgenda()):'<p class="vz">Não foi possível carregar a agenda agora. Tente de novo em alguns minutos.</p>'}
+
+document.addEventListener('click',async ev=>{
+ const b=ev.target.closest('button[data-c]');if(!b)return;
+ const t=document.getElementById(b.dataset.c).textContent;
+ try{await navigator.clipboard.writeText(t)}catch(e){const x=document.createElement('textarea');x.value=t;document.body.appendChild(x);x.select();document.execCommand('copy');x.remove()}
+ b.textContent='Copiado!';setTimeout(()=>{b.textContent=b.dataset.c[0]==='r'?'Copiar aviso':'Copiar texto'},1800)});
+
+async function carregar(){
+ try{const r=await(await fetch(API)).json();if(r.ok){dados={events:r.dados.events||[],removed:r.dados.removed||[]};ok=true}}catch(e){}
+ render()}
+window.addEventListener('hashchange',render);
+carregar();setInterval(carregar,120000);
+</script>
+</body>
+</html>
