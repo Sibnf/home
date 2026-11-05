@@ -96,6 +96,14 @@ details.onde>summary{min-height:2.8rem;display:flex;align-items:center;cursor:po
 .sala.ocup input:checked+span{background:var(--bad);border-color:var(--bad);color:var(--card);opacity:1}
 .sala input:disabled{cursor:not-allowed}
 .sala input:focus-visible+span{outline:3px solid var(--amb);outline-offset:2px}
+.pl{display:grid;gap:.3rem;grid-auto-rows:2.2rem;margin:.3rem 0 .9rem}
+.pl .sala{height:100%}
+.pl .sala>span{padding:1.7rem .1rem .3rem;text-align:center;font-size:.76rem;line-height:1.15;overflow-wrap:break-word}
+.pl .sala>span::before{left:50%;top:.35rem;margin-left:-.55rem}
+.pl .sala small{font-size:.7rem}
+.dec{display:grid;place-items:center;border:1px dashed var(--line);border-radius:6px;color:var(--mut);font-size:.75rem;line-height:1.1;text-align:center;padding:.1rem;overflow-wrap:anywhere}
+.dec.v{writing-mode:vertical-rl}
+.dec.p{justify-self:center;width:4.6rem}
 .chk{display:grid;gap:.5rem;margin:0 0 .8rem}
 .op{display:flex;align-items:center;gap:.7rem;margin:0;padding:.7rem .8rem;min-height:3.2rem;background:var(--bg);border:2px solid var(--line);border-radius:8px;font-weight:600;cursor:pointer}
 .op input{width:1.5rem;height:1.5rem;min-height:0;margin:0;flex:none;accent-color:var(--navy)}
@@ -166,6 +174,10 @@ details summary{cursor:pointer;font-weight:700}
 <label>Nome do evento<input id="f-title" maxlength="80" placeholder="Ex.: Retiro de jovens" autocomplete="off"></label>
 <label id="l-min">Ministério<select id="f-min"></select></label>
 <label>Responsável (quem organiza)<input id="f-resp" maxlength="60" autocomplete="off"></label>
+<div class="chk" role="radiogroup" aria-label="Visibilidade do evento">
+<label class="op"><input type="radio" name="pub" value="0">Interno: só aparece nesta agenda</label>
+<label class="op"><input type="radio" name="pub" value="1">Público: aparece também na agenda aberta ao público</label>
+</div>
 </fieldset>
 
 <fieldset class="pas">
@@ -242,7 +254,7 @@ const F=id=>$('#f-'+id);
 const S={events:[],rooms:[],mins:[],cfg:{teams:[],anchor:''},ov:{},draft:{teams:[],anchor:''},dirty:0,me:null,ok:false,fil:'',ano:String(new Date().getFullYear())};
 const LS={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}},del(k){try{localStorage.removeItem(k)}catch{}}};
 const API_OK=/^https:\/\/script\.google\.com\/.+\/exec$/.test(API_URL);
-const novoD=()=>({id:'',title:'',min:S.me&&!S.me.admin?S.me.min:'',resp:'',notes:'',needs:[],periods:[{date:'',start:'',end:'',rooms:[],open:true}]});
+const novoD=()=>({id:'',title:'',min:S.me&&!S.me.admin?S.me.min:'',resp:'',notes:'',pub:false,needs:[],periods:[{date:'',start:'',end:'',rooms:[],open:true}]});
 let CODE=LS.get('sibnf-code')||'',D=novoD(),cards=[],sigRol='',sigDados='',sigSalas='',sigFil='',hoje=iso(new Date());
 const adm=()=>!!(S.me&&S.me.admin);
 const podeMexer=e=>!!S.me&&(S.me.admin||S.me.min===e.ministry);
@@ -264,7 +276,7 @@ async function escrever(acao,extra){
  else{msg((r&&r.msg)||'Não foi possível salvar. Tente de novo.',1);if(r&&(r.erro==='conflito'||r.erro==='naoencontrado'))carregar(true)}
  return null}
 function aplicar(d){
- S.events=(d.events||[]).filter(valido).map(e=>({id:e.id,title:e.title,ministry:e.ministry||'',resp:e.resp||'',notes:e.notes||'',needs:e.needs||[],periods:e.periods.map(p=>({date:p.date,start:p.start,end:p.end,rooms:p.rooms||[]}))}));
+ S.events=(d.events||[]).filter(valido).map(e=>({id:e.id,title:e.title,ministry:e.ministry||'',resp:e.resp||'',notes:e.notes||'',pub:!!e.pub,needs:e.needs||[],periods:e.periods.map(p=>({date:p.date,start:p.start,end:p.end,rooms:p.rooms||[]}))}));
  S.ov=d.ov||{};S.rooms=d.rooms||[];S.mins=d.mins||[];
  const c=d.cfg||{};
  S.cfg={teams:(c.teams||[]).map(x=>({name:String(x.name||''),members:String(x.members||'')})),anchor:c.anchor||''};
@@ -347,23 +359,52 @@ function fillMin(){
  sel.value=D.min}
 function preencher(){
  F('title').value=D.title;F('resp').value=D.resp;F('notes').value=D.notes;F('min').value=D.min;
+ document.querySelector('input[name=pub][value="'+(D.pub?1:0)+'"]').checked=true;
  $('#ftit').textContent=D.id?'Editar evento':'Novo evento';
  $('#cancelar').hidden=!D.id;
  $('#necs').replaceChildren(...NEC.map(n=>h('label',{class:'op'},h('input',{type:'checkbox',checked:D.needs.includes(n)?'':false,onchange:e=>{D.needs=e.target.checked?[...D.needs,n]:D.needs.filter(x=>x!==n)}}),n)))}
 function limpar(){D=novoD();fillMin();preencher();construir();atual()}
+/* plantas: [coluna, linha, largura, altura, sala ou ~texto decorativo, v=vertical, p=pequeno] */
+const PL=[
+{b:'P1',t:'Térreo (entrada embaixo)',col:'1.2fr .8fr 1.2fr .9fr',c:[
+ ['P1 · Salão Verde',1,1,3,2],['~Banheiros',4,1,1,2],
+ ['P1 · Sala 5',1,3,1,2],['P1 · Sala 4',1,5,1,2],['~Banheiro masculino',1,7,1,1],['~Banheiro feminino',1,8,1,1],
+ ['~Corredor',2,3,1,6],
+ ['P1 · Sala 3',3,3,1,2],['P1 · Sala 2',3,5,1,2],['P1 · Sala 1',3,7,1,2],
+ ['~↑ Entrada',2,9,1,1]]},
+{b:'P1',t:'2º andar',col:'1fr',c:[['P1 · Templo',1,1,1,3]]},
+{b:'P3',t:'1º andar',col:'2fr 2fr 1.3fr 1.8fr',c:[
+ ['P3 · Pátio',1,1,1,6],['~Área',2,1,1,3],['P3 · Cozinha',2,4,1,3],
+ ['~Banheiro',3,1,1,2],['~Banheiro',3,3,1,2],['~Banheiro',3,5,1,2],['P3 · Refeitório',4,1,1,6]]},
+{b:'P3',t:'2º andar',col:'1fr .35fr 1fr 1fr',c:[
+ ['P3 · Sala das Mensageiras',1,1,1,3],['~Salinha',2,2,1,2,'v'],['P3 · Sala do 2º andar',3,1,1,3],
+ ['P3 · Sala dos Embaixadores',4,1,1,3],['~Banheiro',3,4,1,1,'p']]},
+{b:'P3',t:'3º andar',col:'1fr 1fr 1fr',c:[
+ ['P3 · Sala A do 3º andar',1,1,1,3],['P3 · Sala B do 3º andar',2,1,1,3],['P3 · Sala de Jogos',3,1,1,3]]}
+];
 function blocoOnde(p){
  const mapa={},box=h('div',{});
- const tile=r=>{
+ const tile=(r,pl)=>{
   const inp=h('input',{type:'checkbox',onchange:e=>{p.rooms=e.target.checked?[...p.rooms,r.k]:p.rooms.filter(x=>x!==r.k);atual()}});
-  const sub=h('small',{},r.d||'');
-  mapa[r.k]={inp,sub,det:r.d||'',lab:h('label',{class:'sala'},inp,h('span',{},h('b',{},r.n),sub))};
+  const sub=h('small',{},pl?'':(r.d||''));
+  mapa[r.k]={inp,sub,det:pl?'':(r.d||''),lab:h('label',{class:'sala'},inp,h('span',{},h('b',{},r.n),sub))};
+  if(pl&&r.d)mapa[r.k].lab.title=r.d;
   return mapa[r.k].lab};
  for(const b of[...new Set(['P1','P2','P3',...S.rooms.map(r=>r.b)])]){
-  const L=S.rooms.filter(r=>r.b===b),pr=h('div',{class:'pred'},h('h5',{},b));
-  if(!L.length)pr.append(h('p',{class:'hint'},b==='P2'?'Em obras. As salas aparecerão aqui quando forem inauguradas.':'Nenhum local cadastrado.'));
-  for(const g of[...new Set(L.map(r=>r.g))]){
+  const L=S.rooms.filter(r=>r.b===b),pr=h('div',{class:'pred'},h('h5',{},b)),planos=PL.filter(x=>x.b===b),usadas=new Set();
+  for(const pn of planos){
+   const g=h('div',{class:'pl'});g.style.gridTemplateColumns=pn.col;
+   for(const[k,c,l,w,a,f]of pn.c){
+    const r=k[0]==='~'?null:S.rooms.find(x=>x.k===k);let el;
+    if(r){usadas.add(k);el=tile(r,true)}
+    else{el=h('div',{class:'dec'+(f==='v'?' v':'')+(f==='p'?' p':'')},k[0]==='~'?k.slice(1):k.split(' · ')[1])}
+    el.style.gridColumn=c+' / span '+w;el.style.gridRow=l+' / span '+a;g.append(el)}
+   pr.append(h('p',{class:'grp'},pn.t),g)}
+  const Lr=L.filter(r=>!usadas.has(r.k));
+  if(!L.length&&!planos.length)pr.append(h('p',{class:'hint'},b==='P2'?'Em obras. As salas aparecerão aqui quando forem inauguradas.':'Nenhum local cadastrado.'));
+  for(const g of[...new Set(Lr.map(r=>r.g))]){
    if(g)pr.append(h('p',{class:'grp'},g));
-   pr.append(h('div',{class:'tiles'},L.filter(r=>r.g===g).map(tile)))}
+   pr.append(h('div',{class:'tiles'},Lr.filter(r=>r.g===g).map(r=>tile(r))))}
   box.append(pr)}
  box.append(h('div',{class:'pred'},h('h5',{},'Outro lugar'),h('div',{class:'tiles'},tile({k:FORA,n:'Fora da igreja',d:'Passeio, evangelismo ou outro lugar'}))));
  return{box,mapa}}
@@ -431,7 +472,7 @@ function atual(){
 function editar(e){
  const ks=new Set([FORA,...S.rooms.map(r=>r.k)]);
  let perdeu=false;
- D={id:e.id,title:e.title,min:e.ministry,resp:e.resp,notes:e.notes,needs:[...e.needs],periods:e.periods.map(p=>{const rooms=p.rooms.filter(k=>ks.has(k));if(rooms.length!==p.rooms.length)perdeu=true;return{date:p.date,start:p.start,end:p.end,rooms,open:!rooms.length}})};
+ D={id:e.id,title:e.title,min:e.ministry,resp:e.resp,notes:e.notes,pub:!!e.pub,needs:[...e.needs],periods:e.periods.map(p=>{const rooms=p.rooms.filter(k=>ks.has(k));if(rooms.length!==p.rooms.length)perdeu=true;return{date:p.date,start:p.start,end:p.end,rooms,open:!rooms.length}})};
  fillMin();preencher();construir();atual();
  if(perdeu||D.periods.some(p=>!p.rooms.length))msg('Escolha de novo o local deste evento: o que estava guardado não existe mais na lista.',1);
  $('#novo').scrollIntoView({behavior:'smooth'})}
@@ -440,7 +481,7 @@ async function salvar(ev){
  if(!API_OK)return msg('A página ainda não está conectada à planilha.',1);
  if(painel().length){msg('Ainda falta algo no formulário. Veja o aviso em vermelho.',1);$('#aviso').scrollIntoView({behavior:'smooth',block:'center'});return}
  const btn=$('#salvar');btn.disabled=true;btn.textContent='Salvando…';
- const r=await escrever('salvarEvento',{evento:{id:D.id,title:D.title.trim(),ministry:D.min,resp:D.resp.trim(),notes:D.notes.trim(),needs:D.needs,periods:D.periods.map(p=>({date:p.date,start:p.start,end:p.end,rooms:p.rooms}))}});
+ const r=await escrever('salvarEvento',{evento:{id:D.id,title:D.title.trim(),ministry:D.min,resp:D.resp.trim(),notes:D.notes.trim(),pub:!!D.pub,needs:D.needs,periods:D.periods.map(p=>({date:p.date,start:p.start,end:p.end,rooms:p.rooms}))}});
  btn.disabled=false;
  if(!r){atual();return}
  limpar();await carregar(true);msg('Evento salvo.')}
@@ -489,6 +530,7 @@ function renderAgenda(){
    h('div',{class:'corpo'},
     h('h4',{},e.title),
     e.ministry&&h('span',{class:'tag'},e.ministry),
+    e.pub&&h('span',{class:'tag'},'Público'),
     h('ul',{class:'pers'},e.periods.map(p=>h('li',{},
      h('strong',{},dc(p.date)+', '+p.start+' às '+p.end+(noite(p)?' (termina '+dc(add(p.date,1))+')':'')),
      h('span',{class:'loc'},p.rooms.length?p.rooms.join(', '):'Local não informado')))),
@@ -568,6 +610,7 @@ $('#acesso-btn').onclick=()=>{if(S.me){sair();msg('Você saiu.')}else{$('#login'
 F('title').addEventListener('input',e=>{D.title=e.target.value;painel()});
 F('resp').addEventListener('input',e=>{D.resp=e.target.value});
 F('notes').addEventListener('input',e=>{D.notes=e.target.value});
+document.querySelectorAll('input[name=pub]').forEach(r=>r.addEventListener('change',e=>{D.pub=e.target.value==='1'}));
 F('min').addEventListener('change',e=>{D.min=e.target.value;painel()});
 modo();
 if(!API_OK){
