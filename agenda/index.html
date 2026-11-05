@@ -98,12 +98,14 @@ details.onde>summary{min-height:2.8rem;display:flex;align-items:center;cursor:po
 .sala input:focus-visible+span{outline:3px solid var(--amb);outline-offset:2px}
 .pl{display:grid;gap:.3rem;grid-auto-rows:2.2rem;margin:.3rem 0 .9rem}
 .pl .sala{height:100%}
-.pl .sala>span{padding:1.7rem .1rem .3rem;text-align:center;font-size:.76rem;line-height:1.15;overflow-wrap:break-word}
+.pl .sala>span{box-sizing:border-box;min-height:0}
+.pl .sala>span{padding:1.7rem .1rem .3rem;text-align:center;font-size:.85rem;line-height:1.15;overflow-wrap:break-word}
 .pl .sala>span::before{left:50%;top:.35rem;margin-left:-.55rem}
 .pl .sala small{font-size:.7rem}
-.dec{display:grid;place-items:center;border:1px dashed var(--line);border-radius:6px;color:var(--mut);font-size:.75rem;line-height:1.1;text-align:center;padding:.1rem;overflow-wrap:anywhere}
+.dec{display:grid;place-items:center;border:1px dashed var(--line);border-radius:6px;color:var(--mut);font-size:.68rem;line-height:1.1;text-align:center;padding:.1rem;overflow-wrap:break-word;min-width:0}
 .dec.v{writing-mode:vertical-rl}
-.dec.p{justify-self:center;width:4.6rem}
+.dec.p{justify-self:center;width:min(4.6rem,100%)}
+@media (max-width:520px){.pl .sala>span{font-size:.64rem;padding-top:1.6rem}main{padding:.5rem}.sec{padding:.7rem}.pas{padding:.55rem}.per{padding:.5rem}details.onde{padding:.2rem .4rem}}
 .chk{display:grid;gap:.5rem;margin:0 0 .8rem}
 .op{display:flex;align-items:center;gap:.7rem;margin:0;padding:.7rem .8rem;min-height:3.2rem;background:var(--bg);border:2px solid var(--line);border-radius:8px;font-weight:600;cursor:pointer}
 .op input{width:1.5rem;height:1.5rem;min-height:0;margin:0;flex:none;accent-color:var(--navy)}
@@ -366,17 +368,17 @@ function preencher(){
 function limpar(){D=novoD();fillMin();preencher();construir();atual()}
 /* plantas: [coluna, linha, largura, altura, sala ou ~texto decorativo, v=vertical, p=pequeno] */
 const PL=[
-{b:'P1',t:'Térreo (entrada embaixo)',col:'1.2fr .8fr 1.2fr .9fr',c:[
+{b:'P1',t:'Térreo (entrada embaixo)',col:'1.1fr .75fr 1.1fr 1fr',c:[
  ['P1 · Salão Verde',1,1,3,2],['~Banheiros',4,1,1,2],
  ['P1 · Sala 5',1,3,1,2],['P1 · Sala 4',1,5,1,2],['~Banheiro masculino',1,7,1,1],['~Banheiro feminino',1,8,1,1],
  ['~Corredor',2,3,1,6],
  ['P1 · Sala 3',3,3,1,2],['P1 · Sala 2',3,5,1,2],['P1 · Sala 1',3,7,1,2],
  ['~↑ Entrada',2,9,1,1]]},
 {b:'P1',t:'2º andar',col:'1fr',c:[['P1 · Templo',1,1,1,3]]},
-{b:'P3',t:'1º andar',col:'2fr 2fr 1.3fr 1.8fr',c:[
+{b:'P3',t:'1º andar',col:'1.8fr 1.8fr 1.5fr 1.8fr',c:[
  ['P3 · Pátio',1,1,1,6],['~Área',2,1,1,3],['P3 · Cozinha',2,4,1,3],
  ['~Banheiro',3,1,1,2],['~Banheiro',3,3,1,2],['~Banheiro',3,5,1,2],['P3 · Refeitório',4,1,1,6]]},
-{b:'P3',t:'2º andar',col:'1fr .35fr 1fr 1fr',c:[
+{b:'P3',t:'2º andar',col:'1.15fr .22fr .85fr 1.2fr',c:[
  ['P3 · Sala das Mensageiras',1,1,1,3],['~Salinha',2,2,1,2,'v'],['P3 · Sala do 2º andar',3,1,1,3],
  ['P3 · Sala dos Embaixadores',4,1,1,3],['~Banheiro',3,4,1,1,'p']]},
 {b:'P3',t:'3º andar',col:'1fr 1fr 1fr',c:[
@@ -393,11 +395,11 @@ function blocoOnde(p){
  for(const b of[...new Set(['P1','P2','P3',...S.rooms.map(r=>r.b)])]){
   const L=S.rooms.filter(r=>r.b===b),pr=h('div',{class:'pred'},h('h5',{},b)),planos=PL.filter(x=>x.b===b),usadas=new Set();
   for(const pn of planos){
-   const g=h('div',{class:'pl'});g.style.gridTemplateColumns=pn.col;
+   const g=h('div',{class:'pl'});g.style.gridTemplateColumns=pn.col.split(' ').map(t=>'minmax(0,'+t+')').join(' ');
    for(const[k,c,l,w,a,f]of pn.c){
     const r=k[0]==='~'?null:S.rooms.find(x=>x.k===k);let el;
     if(r){usadas.add(k);el=tile(r,true)}
-    else{el=h('div',{class:'dec'+(f==='v'?' v':'')+(f==='p'?' p':'')},k[0]==='~'?k.slice(1):k.split(' · ')[1])}
+    else{el=h('div',{class:'dec'+(f==='v'?' v':'')+(f==='p'?' p':'')},k[0]==='~'?k.slice(1):k.split(' · ')[1]+' (falta cadastrar na planilha)')}
     el.style.gridColumn=c+' / span '+w;el.style.gridRow=l+' / span '+a;g.append(el)}
    pr.append(h('p',{class:'grp'},pn.t),g)}
   const Lr=L.filter(r=>!usadas.has(r.k));
