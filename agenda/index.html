@@ -68,6 +68,7 @@ button.grande{font-size:1.15rem;min-height:3.4rem;padding:.7rem 1.4rem}
 .pers li{padding:.4rem .6rem;background:var(--bg);border-radius:6px;font-size:.95rem}
 .pers strong{display:block}
 .pers .loc{color:var(--mut)}
+.pers .upd{display:block;color:var(--mut);font-size:.85rem}
 /* formulário em passos */
 .pas{margin:0 0 1.1rem;padding:.9rem;border:2px solid var(--line);border-radius:10px;min-width:0}
 .pas legend{padding:0 .4rem;font:700 1.1rem Bitter,Georgia,serif;display:flex;align-items:center;gap:.5rem}
@@ -224,7 +225,7 @@ details summary{cursor:pointer;font-weight:700}
 <div id="toast" role="status" aria-live="polite" hidden><span id="toast-tx"></span><button id="toast-x" type="button">OK</button></div>
 <script>
 /* >>> Depois de implantar o Apps Script, cole aqui a URL que termina em /exec <<< */
-const API_URL='https://script.google.com/macros/s/AKfycbzcrSgM5nA1aMOS08fe2enDDb-WrkyC08keqzdvhjZNSTgllMMz8Shyra7Ha22F2cx2oA/exec';
+const API_URL='https://script.google.com/macros/s/AKfycbwySA5-gB3CmYBh__M3SG_57UywR88JlT_mH9y5A3fB8eRegrYPvzgZ_18UaMA3O_ST/exec';
 
 const $=s=>document.querySelector(s);
 const h=(t,a,...k)=>{const e=document.createElement(t);for(const x in a||{}){const v=a[x];if(x==='class')e.className=v;else if(x.slice(0,2)==='on')e.addEventListener(x.slice(2),v);else if(v!==false&&v!=null)e.setAttribute(x,v)}for(const c of k.flat())if(c)e.append(c.nodeType?c:document.createTextNode(c));return e};
@@ -289,7 +290,7 @@ async function escrever(acao,extra){
  else{msg((r&&r.msg)||'Não foi possível salvar. Tente de novo.',1);if(r&&(r.erro==='conflito'||r.erro==='naoencontrado'))carregar(true)}
  return null}
 function aplicar(d){
- S.events=(d.events||[]).filter(valido).map(e=>({id:e.id,title:e.title,desc:e.desc||'',ministry:e.ministry||'',resp:e.resp||'',notes:e.notes||'',pub:!!e.pub,needs:e.needs||[],periods:e.periods.map(p=>({date:p.date,start:p.start,end:p.end,rooms:p.rooms||[]}))}));
+ S.events=(d.events||[]).filter(valido).map(e=>({id:e.id,title:e.title,desc:e.desc||'',createdAt:Number(e.createdAt)||0,ministry:e.ministry||'',resp:e.resp||'',notes:e.notes||'',pub:!!e.pub,needs:e.needs||[],periods:e.periods.map(p=>({date:p.date,start:p.start,end:p.end,rooms:p.rooms||[],since:Number(p.since)||0}))}));
  S.ov=d.ov||{};S.rooms=d.rooms||[];S.mins=d.mins||[];
  const c=d.cfg||{};
  S.cfg={teams:(c.teams||[]).map(x=>({name:String(x.name||''),members:String(x.members||'')})),anchor:c.anchor||''};
@@ -349,13 +350,15 @@ function fixosEm(p){
 function ocupadas(p,i){
  const[a,b]=iv(p),m={};
  const ver=(q,quem,ti)=>{if(!okP(q))return;const[c,d]=iv(q);if(a<d&&c<b)for(const r of q.rooms)if(r!==FORA&&!m[r])m[r]={full:quem,ti:ti||quem,hr:ti?q.start+'–'+q.end:''}};
- for(const e of S.events){if(D.id&&e.id===D.id)continue;for(const q of e.periods)ver(q,'“'+e.title+'”'+(e.ministry?' ('+e.ministry+')':'')+', '+q.start+' às '+q.end,'“'+e.title+'”')}
+ for(const e of S.events){if(D.id&&e.id===D.id)continue;for(const q of e.periods)ver(q,'“'+e.title+'”'+(e.ministry?' ('+e.ministry+')':'')+', '+q.start+' às '+q.end+((q.since||e.createdAt)?', reserva feita em '+quando(q.since||e.createdAt):''),'“'+e.title+'”')}
  D.periods.forEach((q,j)=>{if(j!==i)ver(q,'o dia '+(j+1)+' deste mesmo evento')});
  return m}
 /* rede de segurança: reservas repetidas que já estejam na planilha */
+const quando=ms=>{const d=new Date(ms),z=n=>String(n).padStart(2,'0');return z(d.getDate())+'/'+z(d.getMonth()+1)+'/'+d.getFullYear()+' às '+z(d.getHours())+':'+z(d.getMinutes())};
+const primeiro=(a,b,t)=>S.me&&a&&b&&a!==b?' Reservas feitas em: este evento, '+quando(a)+'; “'+t+'”, '+quando(b)+'. Marcou primeiro: '+(a<b?'este evento':'“'+t+'”')+'.':'';
 function repetidas(e){
  const r=[];
- for(const p of e.periods){const[a,b]=iv(p);for(const o of S.events){if(o.id===e.id)continue;for(const q of o.periods){const[c,d]=iv(q);if(a<d&&c<b){const k=p.rooms.filter(x=>x!==FORA&&q.rooms.includes(x));if(k.length)r.push(k.join(', ')+' também está reservado para “'+o.title+'” ('+dc(q.date)+', '+q.start+' às '+q.end+').')}}}}
+ for(const p of e.periods){const[a,b]=iv(p);for(const o of S.events){if(o.id===e.id)continue;for(const q of o.periods){const[c,d]=iv(q);if(a<d&&c<b){const k=p.rooms.filter(x=>x!==FORA&&q.rooms.includes(x));if(k.length)r.push(k.join(', ')+' também está reservado para “'+o.title+'” ('+dc(q.date)+', '+q.start+' às '+q.end+').'+primeiro(p.since||e.createdAt,q.since||o.createdAt,o.title))}}}}
  return r}
 function avisosEv(e){
  const out=[],rep=repetidas(e);
@@ -548,8 +551,10 @@ function renderAgenda(){
     e.desc&&h('p',{class:'desc'},e.desc),
     h('ul',{class:'pers'},e.periods.map(p=>h('li',{},
      h('strong',{},dc(p.date)+', '+p.start+' às '+p.end+(noite(p)?' (termina '+dc(add(p.date,1))+')':'')),
-     h('span',{class:'loc'},p.rooms.length?p.rooms.join(', '):'Local não informado')))),
+     h('span',{class:'loc'},p.rooms.length?p.rooms.join(', '):'Local não informado'),
+     S.me&&e.createdAt>0&&p.since>e.createdAt&&h('span',{class:'upd'},'Reserva atualizada em '+quando(p.since))))),
     e.resp&&h('p',{class:'meta'},'Responsável: '+e.resp),
+    S.me&&e.createdAt>0&&h('p',{class:'meta'},'Cadastrado em '+quando(e.createdAt)),
     e.needs.length>0&&h('p',{class:'meta'},'Precisa de: '+e.needs.join(', ')),
     e.notes&&h('p',{class:'nota'},e.notes),
     avisosEv(e),
