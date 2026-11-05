@@ -150,6 +150,7 @@ details.onde>summary{min-height:2.8rem;display:flex;align-items:center;cursor:po
 .eq{display:grid;grid-template-columns:1fr 1.6fr auto;gap:.5rem;margin:0 0 .5rem;align-items:start}
 .eq input{margin-top:0}
 details summary{cursor:pointer;font-weight:700}
+.cod{display:inline-block;font:700 1.7rem/1.2 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.15em;background:var(--okbg);color:var(--ok);padding:.5rem 1rem;border-radius:8px}
 @media (max-width:440px){.g2{grid-template-columns:1fr}}
 @media (max-width:520px){.eq{grid-template-columns:1fr}}
 </style>
@@ -218,8 +219,9 @@ details summary{cursor:pointer;font-weight:700}
 </section>
 
 <section id="v-cantina" hidden>
-<div class="sec"><h2>Revezamento da cantina</h2><p class="hint">Uma equipe por fim de semana, em rodízio.</p><div id="semanas"></div></div>
-<details id="eqbox" class="sec" hidden><summary>Equipes e rodízio</summary><div id="equipes"></div></details>
+<div class="sec"><h2>Cantinas</h2><p class="hint">Cantinas para arrecadar com um propósito. Cada grupo cadastra a sua.</p><div class="acoes"><button id="c-novo" type="button">Cadastrar uma cantina</button></div></div>
+<div id="cform"></div>
+<div id="cantina"></div>
 </section>
 </main>
 <div id="toast" role="status" aria-live="polite" hidden><span id="toast-tx"></span><button id="toast-x" type="button">OK</button></div>
@@ -271,7 +273,7 @@ const MAXT=30;
 const novoD=()=>({id:'',title:'',desc:'',min:S.me&&!S.me.admin?S.me.min:'',resp:'',notes:'',pub:false,needs:[],periods:[{date:'',start:'',end:'',rooms:[],open:true}]});
 let CODE=LS.get('sibnf-code')||'',D=novoD(),cards=[],sigRol='',sigDados='',sigSalas='',sigFil='',hoje=iso(new Date());
 const adm=()=>!!(S.me&&S.me.admin);
-const podeMexer=e=>!!S.me&&(S.me.admin||S.me.min===e.ministry);
+const podeMexer=e=>!!S.me&&e.kind!=='cantina'&&(S.me.admin||S.me.min===e.ministry);
 
 function msg(t,erro){const b=$('#toast');$('#toast-tx').textContent=t;b.className=erro?'bad':'';b.hidden=false;clearTimeout(msg.t);msg.t=setTimeout(()=>{b.hidden=true},erro?15000:8000)}
 function estado(t){const e=$('#est');e.textContent=t;e.hidden=!t}
@@ -290,11 +292,8 @@ async function escrever(acao,extra){
  else{msg((r&&r.msg)||'Não foi possível salvar. Tente de novo.',1);if(r&&(r.erro==='conflito'||r.erro==='naoencontrado'))carregar(true)}
  return null}
 function aplicar(d){
- S.events=(d.events||[]).filter(valido).map(e=>({id:e.id,title:e.title,desc:e.desc||'',createdAt:Number(e.createdAt)||0,ministry:e.ministry||'',resp:e.resp||'',notes:e.notes||'',pub:!!e.pub,needs:e.needs||[],periods:e.periods.map(p=>({date:p.date,start:p.start,end:p.end,rooms:p.rooms||[],since:Number(p.since)||0}))}));
+ S.events=(d.events||[]).filter(valido).map(e=>({id:e.id,title:e.title,desc:e.desc||'',createdAt:Number(e.createdAt)||0,ministry:e.ministry||'',resp:e.resp||'',notes:e.notes||'',pub:!!e.pub,kind:e.kind==='cantina'?'cantina':'',purpose:e.purpose||'',goal:e.goal||'',raised:e.raised||'',needs:e.needs||[],periods:e.periods.map(p=>({date:p.date,start:p.start,end:p.end,rooms:p.rooms||[],since:Number(p.since)||0}))}));
  S.ov=d.ov||{};S.rooms=d.rooms||[];S.mins=d.mins||[];
- const c=d.cfg||{};
- S.cfg={teams:(c.teams||[]).map(x=>({name:String(x.name||''),members:String(x.members||'')})),anchor:c.anchor||''};
- if(!S.dirty){S.draft={teams:S.cfg.teams.map(x=>({...x})),anchor:S.cfg.anchor};renderEquipes()}
  S.ok=true;
  if(S.me&&JSON.stringify(S.rooms)!==sigSalas){fillMin();construir()}
  render()}
@@ -314,7 +313,7 @@ async function carregar(forcar){
 /* entrada por ministério */
 function modo(){
  const lg=!!S.me;
- $('#novo').hidden=!lg;$('#eqbox').hidden=!adm();$('#l-min').hidden=!adm();
+ $('#novo').hidden=!lg;$('#l-min').hidden=!adm();
  $('#acesso').hidden=!API_OK;
  $('#acesso-tx').textContent=lg?'Você entrou como '+S.me.min+(adm()?' (acesso total).':'. Você pode cadastrar e mexer só nos eventos deste ministério.'):'Você está só vendo a agenda. Para cadastrar eventos, entre com o código do seu ministério.';
  $('#acesso-btn').textContent=lg?'Sair':'Entrar com o código';
@@ -324,7 +323,7 @@ async function verificar(){
  if(!CODE||S.me||!API_OK)return;
  try{
   const r=await api({action:'login',code:CODE});
-  if(r.ok){S.me={min:r.ministerio,admin:!!r.admin};limpar();modo();renderEquipes();render()}
+  if(r.ok){S.me={min:r.ministerio,admin:!!r.admin};limpar();modo();render()}
   else if(r.erro==='codigo'){CODE='';LS.del('sibnf-code')}
  }catch{}}
 async function entrar(ev){
@@ -338,7 +337,7 @@ async function entrar(ev){
  if(!r)return;
  if(!r.ok)return msg(r.msg||'Código incorreto.',1);
  CODE=c;LS.set('sibnf-code',c);S.me={min:r.ministerio,admin:!!r.admin};F('code').value='';F('ver').checked=false;F('code').type='password';$('#login').hidden=true;
- limpar();modo();renderEquipes();render();msg('Você entrou como '+S.me.min+'.')}
+ limpar();modo();render();msg('Você entrou como '+S.me.min+'.')}
 
 /* horários fixos da igreja (só avisam) */
 function fixosEm(p){
@@ -562,48 +561,143 @@ function renderAgenda(){
 
 /* cantina */
 function domingos(n){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+(7-d.getDay())%7);return Array.from({length:n},(_,i)=>{const x=new Date(d);x.setDate(d.getDate()+7*i);return iso(x)})}
-const sem=(a,b)=>Math.round((pd(b)-pd(a))/6048e5);
-function equipeDe(dom){
- const T=S.cfg.teams,o=S.ov[dom];
- if(o){const t=T.find(x=>x.name===o.team);if(t)return{t,manual:true}}
- const w=sem(S.cfg.anchor||dom,dom);return{t:T[((w%T.length)+T.length)%T.length]}}
+const LSC='sibnf-cantinas';
+const meus=()=>{try{return JSON.parse(LS.get(LSC)||'{}')}catch{return{}}};
+const guardaC=(id,c)=>{const m=meus();if(c)m[id]=c;else delete m[id];LS.set(LSC,JSON.stringify(m))};
+const brl=v=>Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const nomeSala=k=>k.split(' · ').pop();
+const proC=s=>String(s||'').trim().replace(/^pr[óo][-\s]+/i,'');
+const nomeC=e=>'Cantina do grupo '+e.resp+', pró-'+proC(e.purpose);
+let CE='',CD=null,MODO='',NOVO=null;
+const novoCF=()=>({group:'',purpose:'',goal:'',desc:'',pub:true,date:'',start:'',end:'',rooms:[],prep:false,pdate:'',pstart:'',pend:''});
+let CF=novoCF();
+const cants=()=>S.events.filter(e=>e.kind==='cantina');
+const COZ=()=>{const r=S.rooms.find(x=>x.n==='Cozinha');return r?r.k:''};
+async function escreverC(acao,extra,code){
+ let r;
+ try{r=await api({action:acao,code,...extra})}catch{msg('Sem conexão com a planilha. Tente de novo.',1);return null}
+ if(r&&r.ok)return r;
+ msg((r&&r.msg)||'Não foi possível salvar. Tente de novo.',1);
+ if(r&&(r.erro==='conflito'||r.erro==='naoencontrado'))carregar(true);
+ return r}
+function codigoDe(e){
+ if(adm())return CODE;
+ const c=meus()[e.id]||prompt('Digite o código desta cantina (o organizador recebeu ao cadastrar):');
+ return c?c.trim():''}
+async function acaoC(e,acao,extra,fim){
+ const code=codigoDe(e);if(!code)return;
+ const r=await escreverC(acao,{id:e.id,...extra},code);
+ if(r&&r.ok){if(!adm())guardaC(e.id,acao==='excluirCantina'?'':code);await carregar(true);fim&&fim()}
+ else if(r&&r.erro==='codigo')guardaC(e.id,'')}
+function cfDe(e){
+ const coz=COZ(),pp=e.periods.length>1?e.periods.find(p=>p.rooms.length===1&&p.rooms[0]===coz):null,vp=e.periods.find(p=>p!==pp)||e.periods[0];
+ return{group:e.resp,purpose:e.purpose,goal:e.goal,desc:e.desc,pub:e.pub,date:vp.date,start:vp.start,end:vp.end,rooms:vp.rooms.slice(),prep:!!pp,pdate:pp?pp.date:'',pstart:pp?pp.start:'',pend:pp?pp.end:''}}
+
+/* formulário e entrada */
+function formEntrada(){return h('form',{class:'sec',onsubmit:async ev=>{
+  ev.preventDefault();
+  const c=ev.target.elements.c.value.trim();
+  if(!c)return msg('Digite o código de entrada da cantina.',1);
+  let r=null;
+  try{r=await api({action:'loginCantina',code:c})}catch{return msg('Sem conexão com a planilha. Tente de novo.',1)}
+  if(!r||!r.ok)return msg((r&&r.msg)||'Código incorreto.',1);
+  if(!(r.entrada||r.admin))return msg('Este código não permite cadastrar cantinas.',1);
+  CE=c;MODO='form';CD=null;CF=novoCF();renderForm()}},
+ h('h2',{},'Cadastrar uma cantina'),
+ h('p',{class:'hint'},'Digite o código de entrada da cantina. Peça à liderança ou ao pastor.'),
+ h('label',{},'Código de entrada',h('input',{name:'c',autocomplete:'off',autocapitalize:'characters'})),
+ h('div',{class:'acoes'},h('button',{type:'submit'},'Continuar'),h('button',{type:'button',class:'ghost',onclick:()=>{MODO='';renderForm()}},'Cancelar')))}
+function renderForm(){
+ const box=$('#cform');box.replaceChildren();
+ if(MODO==='entrada'){box.append(formEntrada());return}
+ if(MODO!=='form')return;
+ const f=CF;
+ const inp=(k,rot,tipo,x)=>h('label',{},rot,h('input',{type:tipo||'text',value:f[k],oninput:e=>{f[k]=e.target.value},...x}));
+ const chk=(k,rot)=>h('label',{class:'op'},h('input',{type:'checkbox',checked:f.rooms.includes(k),onchange:e=>{e.target.checked?f.rooms.push(k):f.rooms.splice(f.rooms.indexOf(k),1)}}),rot);
+ const comum=S.rooms.filter(r=>r.n==='Salão Verde'||r.n==='Pátio'),outros=S.rooms.filter(r=>!comum.includes(r));
+ const pv=h('div',{hidden:!f.prep},inp('pdate','Dia do preparo (se for outro dia)','date'),h('div',{class:'g2'},inp('pstart','Preparo: início','time'),inp('pend','Preparo: término','time')));
+ box.append(h('form',{class:'sec',novalidate:'',onsubmit:salvarC},
+  h('h2',{},CD?'Editar cantina':'Cadastrar cantina'),
+  inp('group','Grupo que organiza (equipe, classe, juventude…)','text',{maxlength:'40'}),
+  inp('purpose','Pró-quê? (para que será a arrecadação)','text',{maxlength:'120',placeholder:'ex.: retiro da juventude'}),
+  inp('goal','Meta em reais (opcional)','text',{inputmode:'decimal'}),
+  h('label',{},'Descrição (opcional)',h('textarea',{maxlength:'500',rows:'3',oninput:e=>{f.desc=e.target.value}},f.desc)),
+  inp('date','Dia da venda','date'),
+  h('div',{class:'g2'},inp('start','Início da venda','time'),inp('end','Término da venda','time')),
+  h('p',{class:'hint'},'Onde será a venda'),
+  h('div',{class:'chk',role:'group','aria-label':'Onde será a venda'},comum.map(r=>chk(r.k,r.n))),
+  outros.length>0&&h('details',{},h('summary',{},'Outros locais'),h('div',{class:'chk'},outros.map(r=>chk(r.k,nomeSala(r.k))))),
+  h('div',{class:'chk'},h('label',{class:'op'},h('input',{type:'checkbox',checked:f.prep,onchange:e=>{f.prep=e.target.checked;pv.hidden=!f.prep}}),'Vamos preparar na Cozinha antes')),
+  pv,
+  h('div',{class:'chk'},h('label',{class:'op'},h('input',{type:'checkbox',checked:f.pub,onchange:e=>{f.pub=e.target.checked}}),'Mostrar na agenda pública (a comunicação divulga)')),
+  h('div',{class:'acoes'},h('button',{type:'submit'},'Salvar cantina'),h('button',{type:'button',class:'ghost',onclick:()=>{MODO='';CD=null;renderForm()}},'Cancelar'))));
+ box.scrollIntoView({behavior:'smooth',block:'start'})}
+async function salvarC(ev){
+ ev.preventDefault();
+ const f=CF,b=ev.submitter||ev.target.querySelector('button');
+ if(!f.group.trim()||!f.purpose.trim())return msg('Informe o grupo e para que será a arrecadação.',1);
+ if(!f.date||!f.start||!f.end)return msg('Informe o dia e o horário da venda.',1);
+ if(!f.rooms.length)return msg('Escolha onde será a venda.',1);
+ if(f.prep&&(!f.pstart||!f.pend))return msg('Informe o horário do preparo na Cozinha.',1);
+ const c={group:f.group.trim(),purpose:proC(f.purpose),goal:f.goal.trim(),desc:f.desc.trim(),pub:f.pub,date:f.date,start:f.start,end:f.end,rooms:f.rooms,prep:f.prep?{date:f.pdate||f.date,start:f.pstart,end:f.pend}:null};
+ const code=CD?CD.code:(adm()?CODE:CE);
+ b.disabled=true;
+ const r=await escreverC(CD?'salvarCantina':'criarCantina',CD?{id:CD.e.id,cantina:c}:{cantina:c},code);
+ b.disabled=false;
+ if(!r||!r.ok){if(r&&r.erro==='codigo'){if(CD)guardaC(CD.e.id,'');else CE=''}return}
+ const id=CD?CD.e.id:r.id;
+ if(!CD&&r.codigo){guardaC(id,r.codigo);NOVO={codigo:r.codigo,grupo:c.group}}
+ if(!CD&&!adm())CE='';
+ MODO='';CD=null;CF=novoCF();renderForm();
+ await carregar(true);
+ msg(r.aviso||'Cantina salva.')}
+function editarC(e){
+ const code=codigoDe(e);if(!code)return;
+ CD={e,code};CF=cfDe(e);MODO='form';renderForm()}
+
+/* lista e painel */
+function cartaoC(e,passada){
+ const f=cfDe(e);
+ return h('div',{class:'wk'},
+  h('div',{class:'d'},cap(dl(f.date))+', '+f.start+' às '+f.end),
+  h('h4',{},nomeC(e)),
+  e.goal&&h('p',{class:'meta'},'Meta: '+brl(e.goal)),
+  e.desc&&h('p',{class:'meta'},e.desc),
+  h('p',{class:'meta'},'Venda: '+f.rooms.map(nomeSala).join(', ')+(f.prep?' · Preparo na Cozinha: '+dc(f.pdate||f.date)+', '+f.pstart+' às '+f.pend:'')),
+  e.raised?h('p',{class:'meta'},'Arrecadado: '+brl(e.raised)):(passada&&h('p',{class:'meta'},'Valor arrecadado ainda não informado.')),
+  h('div',{class:'acoes'},
+   h('button',{type:'button',class:'ghost',onclick:()=>editarC(e)},'Editar'),
+   h('button',{type:'button',class:'ghost',onclick:()=>{const v=prompt('Quanto foi arrecadado? (ex.: 350,50)',e.raised?e.raised.replace('.',','):'');if(v!==null)acaoC(e,'arrecadouCantina',{valor:v},()=>msg('Valor registrado.'))}},'Registrar valor arrecadado'),
+   h('button',{type:'button',class:'ghost danger',onclick:()=>{if(confirm('Apagar a cantina “'+nomeC(e)+'”?\n\nIsso não dá para desfazer.'))acaoC(e,'excluirCantina',{},()=>msg('Cantina apagada.'))}},'Apagar')))}
+function painelAdm(C){
+ const faltam=domingos(8).filter(d=>{const sb=add(d,-1);return!C.some(e=>e.periods.some(p=>p.date===d||p.date===sb))});
+ const fin={};
+ C.forEach(e=>{const k=proC(e.purpose).toLowerCase(),x=fin[k]=fin[k]||{nome:proC(e.purpose),n:0,ar:0,meta:0};x.n++;x.ar+=Number(e.raised)||0;x.meta+=Number(e.goal)||0});
+ const pend=C.filter(e=>e.periods[e.periods.length-1].date<hoje&&!e.raised).length;
+ return h('div',{class:'sec'},
+  h('h2',{},'Painel da Administração'),
+  h('p',{class:'meta'},'Fins de semana sem cantina (próximas 8 semanas): '+(faltam.length?faltam.map(d=>dm(add(d,-1))+' e '+dm(d)).join('; '):'nenhum')),
+  h('p',{class:'meta'},'Cantinas já realizadas sem valor informado: '+pend),
+  h('h4',{},'Arrecadado por finalidade'),
+  Object.keys(fin).length?Object.values(fin).map(x=>h('p',{class:'meta'},'Pró-'+x.nome+': '+brl(x.ar)+' em '+x.n+(x.n>1?' cantinas':' cantina')+(x.meta?' (metas somam '+brl(x.meta)+')':''))):h('p',{class:'meta'},'Ainda não há cantinas.'))}
 function renderCantina(){
- const box=$('#semanas');box.replaceChildren();
- const T=S.cfg.teams;
- if(!T.length){box.append(h('p',{class:'vazio'},adm()?'Cadastre as equipes em “Equipes e rodízio” para gerar a escala.':'A escala da cantina ainda não foi cadastrada.'));return}
- const prox=domingos(1)[0];
- for(const dom of domingos(10)){
-  const Dm=pd(dom),sb=pd(dom);sb.setDate(sb.getDate()-1);
-  const sbIso=iso(sb);
-  const r=equipeDe(dom),evs=S.events.flatMap(e=>e.periods.filter(p=>p.date===dom||p.date===sbIso).map(p=>({e,p}))).sort((a,b)=>ordP(a.p,b.p));
-  const rot=sb.getMonth()===Dm.getMonth()?'Sábado '+sb.getDate()+' e domingo '+Dm.getDate()+' de '+MES[Dm.getMonth()]:'Sábado '+sb.getDate()+' de '+MES[sb.getMonth()]+' e domingo '+Dm.getDate()+' de '+MES[Dm.getMonth()];
-  const sel=h('select',{onchange:async x=>{const v=x.target.value;sel.disabled=true;const res=await escrever('definirTroca',{data:dom,equipe:v});sel.disabled=false;if(res)await carregar(true);else sel.value=S.ov[dom]?S.ov[dom].team:''}},h('option',{value:''},'Automática (rodízio)'),T.map(t=>h('option',{value:t.name},t.name)));
-  sel.value=S.ov[dom]?S.ov[dom].team:'';
-  box.append(h('div',{class:'wk'},
-   h('div',{class:'d'},rot+(dom===prox?', este fim de semana':'')),
-   h('h4',{},r.t.name+(r.manual?' (trocada)':'')),
-   r.t.members&&h('p',{class:'meta'},r.t.members),
-   evs.length>0&&h('p',{class:'meta'},'Eventos no fim de semana: '+evs.map(x=>x.e.title+' ('+(x.p.date===dom?'dom':'sáb')+', '+x.p.start+')').join(', ')),
-   adm()&&h('label',{},'Equipe deste fim de semana',sel)))}}
-function renderEquipes(){
- const box=$('#equipes');box.replaceChildren();
- if(!adm())return;
- const d=S.draft;
- box.append(h('label',{},'Domingo em que a 1ª equipe serve',h('input',{type:'date',value:d.anchor||'',oninput:e=>{d.anchor=e.target.value;S.dirty=1}})));
- d.teams.forEach((t,i)=>box.append(h('div',{class:'eq'},
-  h('input',{placeholder:'Nome da equipe',value:t.name,maxlength:'40',oninput:e=>{t.name=e.target.value;S.dirty=1}}),
-  h('input',{placeholder:'Integrantes, separados por vírgula',value:t.members,maxlength:'200',oninput:e=>{t.members=e.target.value;S.dirty=1}}),
-  h('button',{type:'button',class:'ghost danger',onclick:()=>{d.teams.splice(i,1);S.dirty=1;renderEquipes()}},'Remover'))));
- box.append(h('div',{class:'acoes'},
-  h('button',{type:'button',class:'ghost',onclick:()=>{d.teams.push({name:'',members:''});S.dirty=1;renderEquipes()}},'Adicionar equipe'),
-  h('button',{type:'button',onclick:salvarEquipes},'Salvar equipes')))}
-async function salvarEquipes(){
- const d=S.draft,teams=d.teams.map(t=>({name:t.name.trim(),members:t.members.trim()})).filter(t=>t.name);
- if(!teams.length)return msg('Informe pelo menos uma equipe com nome.',1);
- const a=d.anchor?pd(d.anchor):pd(domingos(1)[0]);a.setDate(a.getDate()-a.getDay());
- const r=await escrever('salvarEquipes',{equipes:teams,ancora:iso(a)});
- if(!r)return;
- S.dirty=0;await carregar(true);msg('Equipes salvas.')}
+ const box=$('#cantina');box.replaceChildren();
+ const C=cants().sort(ordE);
+ if(NOVO)box.append(h('div',{class:'sec'},
+  h('h2',{},'Código da cantina do grupo '+NOVO.grupo),
+  h('p',{class:'hint'},'Guarde este código. Ele só aparece agora. Com ele o organizador edita, apaga e registra o valor arrecadado desta cantina.'),
+  h('p',{},h('span',{class:'cod'},NOVO.codigo)),
+  h('div',{class:'acoes'},
+   h('button',{type:'button',onclick:()=>{try{navigator.clipboard.writeText(NOVO.codigo).then(()=>msg('Código copiado.'))}catch{}}},'Copiar'),
+   h('button',{type:'button',class:'ghost',onclick:()=>{NOVO=null;renderCantina()}},'Entendi, já guardei'))));
+ if(adm())box.append(painelAdm(C));
+ const prox=C.filter(e=>e.periods[e.periods.length-1].date>=hoje),
+  feitas=C.filter(e=>e.periods[e.periods.length-1].date<hoje&&e.periods[e.periods.length-1].date>=add(hoje,-90)).reverse();
+ box.append(h('div',{class:'sec'},h('h2',{},'Próximas cantinas'),
+  prox.length?prox.map(e=>cartaoC(e,false)):h('p',{class:'vazio'},'Nenhuma cantina marcada ainda.'),
+  prox.length>0&&h('p',{class:'hint'},'Quem organiza usa os botões do cartão e o código da própria cantina.')));
+ if(feitas.length)box.append(h('div',{class:'sec'},h('h2',{},'Já realizadas'),feitas.map(e=>cartaoC(e,true))))}
+$('#c-novo').onclick=()=>{CD=null;CF=novoCF();MODO=(adm()||CE)?'form':'entrada';renderForm()};
 
 function render(){hoje=iso(new Date());renderAnos();renderFil();renderRol();renderAgenda();renderCantina();atual()}
 

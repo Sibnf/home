@@ -47,7 +47,8 @@ const t0=(d,h)=>new Date(d+'T'+h+':00-03:00').getTime();
 const win=p=>{const a=t0(p.date,p.start);let b=t0(p.date,p.end);if(b<=a)b+=D;return[a,b]};
 const diaBR=ms=>new Date(ms-3*H).toISOString().slice(0,10);
 const nDias=a=>Math.round((Date.parse(diaBR(a))-Date.parse(diaBR(Date.now())))/D);
-const prox=e=>e.periods.find(p=>win(p)[1]>Date.now());
+const prox=e=>{const L=e.periods.filter(p=>win(p)[1]>Date.now());if(e.kind==='cantina'){const v=L.filter(p=>!(p.rooms.length===1&&/Cozinha$/.test(p.rooms[0])));if(v.length)return v[0]}return L[0]};
+const nome=e=>e.kind==='cantina'&&e.group&&e.purpose?'Cantina do grupo '+e.group+', pró-'+String(e.purpose).trim().replace(/^pr[óo][-\s]+/i,''):e.title;
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmt=(ms,o)=>new Date(ms).toLocaleString('pt-BR',Object.assign({timeZone:'America/Sao_Paulo'},o));
 const quando=p=>fmt(t0(p.date,'12:00'),{weekday:'long',day:'numeric',month:'long'})+', das '+p.start+' às '+p.end;
@@ -74,7 +75,7 @@ const MARCOS=[
  {k:'1 semana',intro:'🗓️ Falta 1 semana para',q:a=>t0(diaBR(a-7*D),'09:00')},
  {k:'Véspera',intro:'⏰ É amanhã:',q:a=>t0(diaBR(a-D),'18:00')},
  {k:'3 horas',intro:'🔔 Daqui a 3 horas:',q:a=>a-3*H}];
-const texto=(m,e,p)=>m.intro+' '+e.title+'!\n'+quando(p)+'\nLocal: '+onde(p)+(e.desc?'\n\n'+e.desc:'')+'\n\n'+ASSINATURA;
+const texto=(m,e,p)=>m.intro+' '+(e.kind==='cantina'?'a ':'')+nome(e)+'!\n'+quando(p)+'\nLocal: '+onde(p)+(e.desc?'\n\n'+e.desc:'')+'\n\n'+ASSINATURA;
 const retrat=r=>'⚠️ Aviso: o evento “'+r.title+'” foi cancelado e não vai mais acontecer'+(r.dates?' ('+r.dates+')':'')+'. Pedimos desculpas pelo transtorno.\n\n'+ASSINATURA;
 
 function viewAgenda(){
@@ -84,8 +85,8 @@ function viewAgenda(){
  it.forEach(({e,p})=>{
   const m=fmt(t0(p.date,'12:00'),{month:'long',year:'numeric'});
   if(m!==mes){mes=m;h+='<h2>'+esc(m)+'</h2>'}
-  const r=rotulo(p),extra=e.periods.filter(q=>win(q)[1]>Date.now()).length-1;
-  h+='<div class="c">'+(r?'<span class="b '+r[1]+'">'+r[0]+'</span>':'')+'<h3>'+esc(e.title)+'</h3><p class="d">'+esc(quando(p))+'</p><p>'+esc(onde(p))+(e.ministry&&e.ministry!=='Igreja toda'?' · '+esc(e.ministry):'')+'</p>'+(extra>0?'<p>+ mais '+extra+(extra>1?' dias':' dia')+' neste evento</p>':'')+(e.desc?'<p>'+esc(e.desc)+'</p>':'')+'</div>'});
+  const r=rotulo(p),extra=e.kind==='cantina'?0:e.periods.filter(q=>win(q)[1]>Date.now()).length-1;
+  h+='<div class="c">'+(r?'<span class="b '+r[1]+'">'+r[0]+'</span>':'')+'<h3>'+esc(nome(e))+'</h3><p class="d">'+esc(quando(p))+'</p><p>'+esc(onde(p))+(e.kind!=='cantina'&&e.ministry&&e.ministry!=='Igreja toda'?' · '+esc(e.ministry):'')+'</p>'+(extra>0?'<p>+ mais '+extra+(extra>1?' dias':' dia')+' neste evento</p>':'')+(e.desc?'<p>'+esc(e.desc)+'</p>':'')+'</div>'});
  return h}
 
 function viewCom(){
@@ -99,7 +100,7 @@ function viewCom(){
  if(!it.length)h+='<p class="vz">Sem eventos públicos pela frente.</p>';
  it.forEach(({e,p},i)=>{
   const a=win(p)[0];
-  h+='<div class="c"><h3>'+esc(e.title)+'</h3><p class="d">'+esc(quando(p))+'</p>';
+  h+='<div class="c"><h3>'+esc(nome(e))+'</h3><p class="d">'+esc(quando(p))+'</p>';
   MARCOS.forEach((m,j)=>{
    const q=m.q(a),pas=q<Date.now(),id='p'+i+'_'+j,hoje=diaBR(q)===diaBR(Date.now());
    h+='<div class="mk'+(pas&&!hoje?' pas':'')+'"><span>'+m.k+' · '+(hoje?'hoje às '+fmt(q,{timeStyle:'short'}):pas?'já passou':fmt(q,{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}))+'</span>'+(pas&&!hoje?'':'<button data-c="'+id+'">Copiar texto</button>')+'</div>'+(pas&&!hoje?'':'<div class="pst" id="'+id+'">'+esc(texto(m,e,p))+'</div>')});
